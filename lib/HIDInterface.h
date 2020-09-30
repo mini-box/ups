@@ -1,31 +1,55 @@
-// HIDInterface.h: interface for the HIDInterface class.
-//
-//////////////////////////////////////////////////////////////////////
+#ifndef _HIDINTERFACE_H_
+#define _HIDINTERFACE_H_
 
-#if !defined(AFX_HIDINTERFACE_H__27FBB2E6_FCE2_4860_9AFB_C27E5C6DA74E__INCLUDED_)
-#define AFX_HIDINTERFACE_H__27FBB2E6_FCE2_4860_9AFB_C27E5C6DA74E__INCLUDED_
+#include "usbhid.h"
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
+#define DBG_LEN 25 //4 + 17 + 4
+#define SETTINGS_PACKS 64
+#define MAX_MESSAGE_CNT 256
 
-#include "HArray.h"
-class HIDDevice;
-
-class HIDInterface
+struct ATXMSG
 {
-public:
-	HIDInterface(HIDDevice* hdev);
-	virtual ~HIDInterface();
+	unsigned int nIndex;
+	unsigned int nLen;
+	const char* strName;
+	bool bEnabled; // enabled to write or just to read
+	int nReadMode; // 1=normal, 2=float, 3=hh:mm:ss
+	double	 dMultiplier;
+	const char*  strText; // description/comment
+	const char*  strUnit; // measurement unit
+};
+typedef ATXMSG _ATXMSG;
 
-	virtual void Received(HArray* array)=0;
-	virtual void Disconnected()=0;
 
-	void OpenDevice();
-	void CloseDevice();
+class HIDInterface {
+	public:
+		HIDInterface(USBHID *d);
+		virtual ~HIDInterface();
+		int sendMessageWithBuffer(unsigned char cType, unsigned int buflen, unsigned char* buffer, unsigned int len, ...);
+		int sendMessage(unsigned char cType, unsigned int len, ...);		
+		int sendCommand(unsigned char command, unsigned char value);
+		int sendCommandEx(unsigned char command, unsigned char value1, unsigned char value2);
+		int recvMessage(unsigned char *buffer);
+		int GetMessageIdxByName(const char* name);
+		int varsToFile(const char *filename, bool withComments);
+		int fileToVars(const char *filename);
 
-protected:
-	HIDDevice* m_pParent;
+		virtual void parseMessage(unsigned char *msg){};
+		virtual void printValues(){};
+		virtual float convertOneValue2Float(unsigned char *buffer, int nLen, int nIndex, int nReadMode, double dMultiplier){};
+		virtual bool readOneValue(char *str, int nReadMode, double dMultiplier, int len, unsigned char &c1, unsigned char &c2, unsigned char &c3, unsigned char &c4){};
+		virtual void convertOneValue2String(char *destination, int nLen, int nIndex, int nReadMode, double dMultiplier){};
+		virtual bool setVariableData(int mesg_no, char *str){};
+		virtual ATXMSG* GetMessages(){};
+		virtual double GetConstant(int i){};
+		virtual unsigned int* GetTermistorConsts(){};
+		virtual unsigned char getUPSVariableData(unsigned int cnt, char *name, char *value, char *unit, char *comment){};
+		virtual void restartUPS(){};
+		virtual void restartUPSInBootloaderMode(){};		
+
+		unsigned char m_chPackages[SETTINGS_PACKS * 16];
+
+		USBHID *d;
 };
 
-#endif // !defined(AFX_HIDINTERFACE_H__27FBB2E6_FCE2_4860_9AFB_C27E5C6DA74E__INCLUDED_)
+#endif // _HIDINTERFACE_H_

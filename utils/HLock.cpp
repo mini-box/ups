@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "util.h"
 #include "HLock.h"
 
 HLock::HLock()

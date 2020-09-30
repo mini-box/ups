@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "util.h"
 #include "TxFile.h"
 
 TxFile::TxFile(const char* file)

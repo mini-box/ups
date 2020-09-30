@@ -1,8 +1,4 @@
-// stdafx.cpp : source file that includes just the standard includes
-// OpenUPS2Lib.pch will be the pre-compiled header
-// stdafx.obj will contain the pre-compiled type information
-
-#include "stdafx.h"
+#include "util.h"
 
 unsigned char hex2bcd (unsigned char x)
 {

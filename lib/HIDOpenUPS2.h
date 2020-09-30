@@ -1,19 +1,12 @@
-// HIDOpenUPS2.h: interface for the HIDOpenUPS2 class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_HIDOPENUPS2_H__)
-#define AFX_HIDOPENUPS2_H__
-
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
+#ifndef _HIDOPENUPS2_H_
+#define _HIDOPENUPS2_H_
 
 #include "HIDInterface.h"
+#include "usbhid.h"
+
+#include "HArray.h"
 #include "HLock.h"
 #include "HList.h"
-//#include "custom_versions.h"
-
 
 #define MANUFACTURER	"Mini-Box.Com"
 #define PROD_NORMAL		"OPEN-UPS2"
@@ -25,8 +18,6 @@
 #define UPS12V_MSG_WRITE 32
 
 #define MAX_BUF			500
-
-class HIDGraphics;
 
 #define ETA_CHG (double)0.90
 
@@ -154,74 +145,79 @@ class HIDGraphics;
 #define SCRIPT_START_ADDR			0x3C00//3F80
 #define SCRIPT_END_ADDR				0x3FB0
 
-struct ATXMSG
-{
-	unsigned int nIndex;
-	unsigned int nLen;
-	const _TCHAR*  strName;//name diaplayed in selector
-	bool	 bEnabled;//enabled to write or just to read
-	int		 nReadMode;//1=normal, 2=float, 3=hh:mm:ss
-	double	 dMultiplier;
-	const _TCHAR*  strText;//long text 
-	const _TCHAR*  strUnit;//measurement unit
-};
-typedef ATXMSG _ATXMSG;
-
-struct UVP
-{
-	unsigned char nCVR_1;
-	unsigned char nCVR_2;
-	double fVoltage;
-};
 
 class HIDOpenUPS2 : public HIDInterface
 {
 public:
-	HIDOpenUPS2(HIDDevice* hdev, int timeout);
+	HIDOpenUPS2(USBHID *d);
 	virtual ~HIDOpenUPS2();
 
-	void connectGraph(HIDGraphics* hg);
+	int sendMessageWithBuffer(unsigned char cType, unsigned int buflen, unsigned char* buffer, unsigned int len, ...);
+	int sendMessage(unsigned char cType, unsigned int len, ...);		
+	int sendCommand(unsigned char command, unsigned char value);
+	int sendCommandEx(unsigned char command, unsigned char value1, unsigned char value2);
+	void parseMessage(unsigned char *msg);
+	void printValues();
+	float convertOneValue2Float(unsigned char *buffer, int nLen, int nIndex, int nReadMode, double dMultiplier);
+	bool readOneValue(char *str, int nReadMode, double dMultiplier, int len, unsigned char &c1, unsigned char &c2, unsigned char &c3, unsigned char &c4);
+	void convertOneValue2String(char *destination, int nLen, int nIndex, int nReadMode, double dMultiplier);
+	bool setVariableData(int mesg_no, char *str);
+	ATXMSG* GetMessages();
+	double GetConstant(int i);
+	unsigned int* GetTermistorConsts();
+	int GetMessageIdxByName(const char* name);
+	unsigned char getUPSVariableData(unsigned int cnt, char *name, char *value, char *unit, char *comment);
+	void restartUPS();
+	void restartUPSInBootloaderMode();
+	void setVOutVolatile(float vout);
+	void incDecVOutVolatile(unsigned char inc);
 
-	/** Commands */
+	void GetStatus();
+	void ReadConfigurationMemory();
+	void EraseConfigurationMemory();
+	void WriteConfigurationMemory();
 
-	HIDDevice* getParent(){return m_pParent;};
 
-	bool Write(HArray* mesg);
 
-	//static double GetVoltageVOut(unsigned char data);
-	//static unsigned char GetDataVOut(double vout);
+	float m_fVIN;
+	float m_fVBat;
+	float m_fVOut;
+	float m_fCCharge;
+	float m_fCDischarge;
+	float m_fTemperature[3];
+	float m_fVCell[3];
+	float m_fVDuty;
+	unsigned char m_bCheck23[8];
+	unsigned char m_bCheck24[8];
+	unsigned char m_bCheck25[8];
 
-	bool sendMessage(unsigned char cType, unsigned int len, ...);
-	bool sendMessage(unsigned char cType, unsigned int buflen, unsigned char* buffer, unsigned int len, ...);
+	unsigned char m_nVerMajor;
+	unsigned char m_nVerMinor;
 
-	bool waitForAnswer();
+	unsigned char m_nState; //offline,usb,batpowered,vinpowered
 
-	HArray* getReceivedMessage();
+	unsigned char m_bStateUPS;
+	unsigned char m_bStateCHG;
+	unsigned char m_bStateDBG;
+	unsigned char m_bCapacity;
+	unsigned char m_bBatOn[3];
+	unsigned int m_nRTE;
+	unsigned char m_bUPSMode;
 
-	virtual void Received(HArray* array);
-	virtual void Disconnected();
+	unsigned char m_bVOutPot;
+	unsigned char m_bConfigSwitch;
 
-	static ATXMSG* GetMessages();
-	static double GetConstant(int i);
-	static unsigned int* GetTermistorConsts();
-	static int GetMessageNoByName(const char* name);
+	unsigned char m_bDBG[DBG_LEN]; //4 byte + 8 byte + 4 byte
+	unsigned char m_bDBG2[30];
 
-private:
-	int _getReadMsg(int type);
+	unsigned int m_nShutdownType; //from FW 1.4
 
-	void GetLine(char* buf, int ln);
+	unsigned char m_chStateMachine;
+	unsigned char m_nLoadCfgStatus;
+	unsigned char m_nSaveCfgStatus;
 
-	unsigned char m_cBuff[MAX_BUF];
-
-	int m_nTimeout;
-
-	int  m_nError;
-
-	HLock m_lockCommand;
-	HList m_list;
-	HLock m_lockWrite;
-	
-	HIDGraphics* m_pGraphics;
+	unsigned long m_ulSettingsAddr;
+	unsigned char m_chPackages[SETTINGS_PACKS * 16];
 };
 
-#endif // !defined(AFX_HIDOPENUPS2_H__)
+#endif
