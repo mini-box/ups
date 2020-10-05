@@ -7,7 +7,7 @@
 #include "HIDInterface.h"
 #include "HArray.h"
 
-#define UPS12V_CMD_OUT					0xB1
+#define OPENUPS2_CMD_OUT					0xB1
 
 
 HIDInterface::HIDInterface(USBHID *hidDevice) {
@@ -16,6 +16,24 @@ HIDInterface::HIDInterface(USBHID *hidDevice) {
 
 HIDInterface::~HIDInterface() {
 	
+}
+
+void HIDInterface::printConfiguration()
+{
+	int var_max = 256;
+	char name[256];
+	char unit[64];
+	char value[256];
+	char comment[1024];
+
+	for (int i = 0; i < var_max; i++)
+	{
+		if (getUPSVariableData(i, name, value, unit, comment))
+		{
+			fprintf(stderr, "%d. %s: %s # %s %s\n", i, name, value, unit, comment);
+			fprintf(stderr, "%s\n", "---------------------------------------------------------------------------------------------------------------");
+		}
+	}
 }
 
 int HIDInterface::sendMessageWithBuffer(unsigned char cType, unsigned int buflen, unsigned char* buffer, unsigned int len, ...)
@@ -71,11 +89,11 @@ int HIDInterface::sendMessage(unsigned char cType, unsigned int len, ...)
 
 int HIDInterface::sendCommand(unsigned char command, unsigned char value)
 {
-	return sendMessage(UPS12V_CMD_OUT, 3, command, value, 0);
+	return sendMessage(OPENUPS2_CMD_OUT, 3, command, value, 0);
 }
 int HIDInterface::sendCommandEx(unsigned char command, unsigned char value1, unsigned char value2)
 {
-	return sendMessage(UPS12V_CMD_OUT, 3, command, value1, value2);
+	return sendMessage(OPENUPS2_CMD_OUT, 3, command, value1, value2);
 }
 
 int HIDInterface::recvMessage(unsigned char *buffer)
@@ -108,7 +126,7 @@ int HIDInterface::GetMessageIdxByName(const char* name)
 	for (int i=0;i < MAX_MESSAGE_CNT;i++)
 	{
 		ATXMSG msg = GetMessages()[i];
-		fprintf(stderr, "GetMessage %d: %s\n", i, msg.strName);
+		// fprintf(stderr, "GetMessage %d: %s\n", i, msg.strName);
 		if (msg.nLen!=0)
 			if (strcasecmp(msg.strName, name) == 0) 
 				return i;

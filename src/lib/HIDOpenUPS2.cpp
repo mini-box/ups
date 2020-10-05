@@ -3,7 +3,7 @@
 
 #include <math.h>
 
-double g_memConstantsOpenUPS2[] =
+double g_OpenUPS2_memConstants[] =
 	{
 		0.001, //Vin				//0
 		0.001, //Vout				//1
@@ -14,7 +14,7 @@ double g_memConstantsOpenUPS2[] =
 		0.001  //battery
 	};
 
-ATXMSG g_memMessagesOpenUPS2[MAX_MESSAGE_CNT] =
+ATXMSG g_OpenUPS2_memMessages[MAX_MESSAGE_CNT] =
 	{
 		{67, 1, _T("OPENUPSMODE"), true, 17, 1, _T("OPENUPS mode\r\n0-Autorestart when input is present=yes\t(UPS)\r\n1-Autorestart when input is present=no\t(LAPTOP)\r\n2-Energy Pack mode\t\t\t(ON/OFF)"), _T("[-]")},
 		{28, 4, _T("CAPACITY"), true, 16, 1, _T("Battery Capacity.\r\nDefault 1500mAh"), _T("[mAh]")},
@@ -103,7 +103,7 @@ ATXMSG g_memMessagesOpenUPS2[MAX_MESSAGE_CNT] =
 		{1020, 2, _T("WRITE COUNT"), true, 1, 1, _T("Number of times the flash memory has been written. Parameter is Read only."), _T("[count]")},
 	};
 
-unsigned int g_memTermOpenUPS2[] =
+unsigned int g_OpenUPS2_memTerm[] =
 	{
 		(unsigned int)0x31, 
 		(unsigned int)0x40, 
@@ -142,16 +142,6 @@ unsigned int g_memTermOpenUPS2[] =
 	};
 
 
-#define Sleep usleep
-
-#define A_SLEEP 5
-#define A_TIMEOUT 3000
-#define BUF_LINE_LEN 47
-#define STR_LINE_LEN 57
-
-#define PKG_LEN_LCD 64
-#define PKG_LEN_FLASH 37
-
 HIDOpenUPS2::HIDOpenUPS2(USBHID *d): HIDInterface(d)
 {
 	m_ulSettingsAddr = SETTINGS_ADDR_START;
@@ -164,17 +154,17 @@ HIDOpenUPS2::~HIDOpenUPS2()
 
 ATXMSG* HIDOpenUPS2::GetMessages()
 {
-	return g_memMessagesOpenUPS2;
+	return g_OpenUPS2_memMessages;
 }
 
 double HIDOpenUPS2::GetConstant(int i)
 {
-	return g_memConstantsOpenUPS2[i];
+	return g_OpenUPS2_memConstants[i];
 }
 
 unsigned int* HIDOpenUPS2::GetTermistorConsts()
 {
-	return g_memTermOpenUPS2;
+	return g_OpenUPS2_memTerm;
 }
 
 void HIDOpenUPS2::printValues()
@@ -205,66 +195,14 @@ void HIDOpenUPS2::printValues()
 	*/
 }
 
-int HIDOpenUPS2::sendMessageWithBuffer(unsigned char cType, unsigned int buflen, unsigned char* buffer, unsigned int len, ...)
-{
-	HArray mesg(buflen + len + 1);
-	mesg.getBuf()[0] = cType;
-
-	va_list args;
-	va_start(args, len);
-	unsigned int cnt = 0;
-	unsigned char i = va_arg(args, unsigned int);
-
-	while (cnt < len)
-	{
-		mesg.getBuf()[1+cnt] = i;
-		cnt++;
-		if (cnt < len)
-			i = va_arg(args, unsigned int);
-	}
-	
-	va_end(args);
-	
-	memcpy(mesg.getBuf() + 1 + len, buffer, buflen);
-
-	int ret = d->writeInterrupt(mesg.getBuf(), mesg.length());
-	//fprintf(stderr, "[0x%02x] written %d/%d\n", cType, ret, len + 1);
-	return ret;
-}
-
-
-int HIDOpenUPS2::sendMessage(unsigned char cType, unsigned int len, ...)
-{
-	HArray mesg(len + 1);
-	mesg.getBuf()[0] = cType;
-
-	va_list args;
-	va_start(args, len);
-	unsigned int cnt = 0;
-
-	unsigned char i = va_arg(args, unsigned int);
-	while (cnt < len)
-	{
-		mesg.getBuf()[1 + cnt] = i;
-		cnt++;
-		if (cnt < len)
-			i = va_arg(args, unsigned int);
-	}
-	va_end(args);
-
-	int ret = d->writeInterrupt(mesg.getBuf(), mesg.length());
-	//fprintf(stderr, "[0x%02x] written %d/%d\n", cType, ret, len + 1);
-	return ret;
-}
-
 int HIDOpenUPS2::sendCommand(unsigned char command, unsigned char value)
 {
-	return sendMessage(UPS12V_CMD_OUT, 3, command, value, 0);
+	return sendMessage(OPENUPS2_CMD_OUT, 3, command, value, 0);
 }
 
 int HIDOpenUPS2::sendCommandEx(unsigned char command, unsigned char value1, unsigned char value2)
 {
-	return sendMessage(UPS12V_CMD_OUT, 3, command, value1, value2);
+	return sendMessage(OPENUPS2_CMD_OUT, 3, command, value1, value2);
 }
 
 void HIDOpenUPS2::parseMessage(unsigned char *msg)
@@ -274,7 +212,7 @@ void HIDOpenUPS2::parseMessage(unsigned char *msg)
 
 	switch (msg[0])
 	{
-	case UPS12V_RECV_ALL_VALUES:
+	case OPENUPS2_RECV_ALL_VALUES:
 	{
 		int i;
 
@@ -315,7 +253,7 @@ void HIDOpenUPS2::parseMessage(unsigned char *msg)
 		m_bConfigSwitch = msg[29];
 	}
 	break;
-	case UPS12V_CLOCK_IN:
+	case OPENUPS2_CLOCK_IN:
 	{
 		int i;
 
@@ -344,7 +282,7 @@ void HIDOpenUPS2::parseMessage(unsigned char *msg)
 			m_bDBG[i] = msg[28 + i];
 	}
 	break;
-	case UPS12V_MEM_READ_IN:
+	case OPENUPS2_MEM_READ_IN:
 	{
 		memcpy(m_chPackages + (m_ulSettingsAddr - SETTINGS_ADDR_START), msg + 5, 16);
 		/*
@@ -954,8 +892,6 @@ unsigned char HIDOpenUPS2::getUPSVariableData(unsigned int cnt, char *name, char
 
 	if (value)
 	{
-		//if (g_pUPSConn->m_nLoadCfgStatus != 100) return 0;//todo back
-
 		convertOneValue2String(value, HIDOpenUPS2::GetMessages()[cnt].nLen,
 							   HIDOpenUPS2::GetMessages()[cnt].nIndex,
 							   HIDOpenUPS2::GetMessages()[cnt].nReadMode,
@@ -967,26 +903,26 @@ unsigned char HIDOpenUPS2::getUPSVariableData(unsigned int cnt, char *name, char
 
 void HIDOpenUPS2::restartUPS()
 {
-	sendCommand(DCMD_RESTART_UPS, 1);
+	sendCommand(OPENUPS2_DCMD_RESTART_UPS, 1);
 }
 
 void HIDOpenUPS2::restartUPSInBootloaderMode()
 {
-	sendMessage(UPS12V_ENTER_BOOTLOADER_OUT, 2, 0xFA, 0xCD);
+	sendMessage(OPENUPS2_ENTER_BOOTLOADER_OUT, 2, 0xFA, 0xCD);
 }
 
 void HIDOpenUPS2::setVOutVolatile(float vout)
 {
 	int voltage = (int)(vout * 1000.0);//mV
-	sendCommandEx(DCMD_SPI_WRITE_DATA_VOL_VOUT, (voltage >> 8) & 0xFF, voltage & 0xFF);
+	sendCommandEx(OPENUPS2_DCMD_SPI_WRITE_DATA_VOL_VOUT, (voltage >> 8) & 0xFF, voltage & 0xFF);
 }
 
 void HIDOpenUPS2::incDecVOutVolatile(unsigned char inc)
 {
 	if (inc) // wiper is opposite to vout
-		sendCommand(DCMD_SPI_DEC_VOL_WIPER_VOUT, 0);
+		sendCommand(OPENUPS2_DCMD_SPI_DEC_VOL_WIPER_VOUT, 0);
 	else 
-		sendCommand(DCMD_SPI_INC_VOL_WIPER_VOUT, 0);
+		sendCommand(OPENUPS2_DCMD_SPI_INC_VOL_WIPER_VOUT, 0);
 }
 
 void HIDOpenUPS2::GetStatus() 
@@ -994,19 +930,19 @@ void HIDOpenUPS2::GetStatus()
 	unsigned char recv[32];
 	int ret;
 
-	sendMessage(UPS12V_GET_ALL_VALUES, 0);
+	sendMessage(OPENUPS2_GET_ALL_VALUES, 0);
 	recvMessage(recv);
 	parseMessage(recv);
 
-	ret = sendMessage(UPS12V_GET_ALL_VALUES_2, 0);
+	ret = sendMessage(OPENUPS2_GET_ALL_VALUES_2, 0);
 	recvMessage(recv);
 	parseMessage(recv);
 
-	ret = sendMessage(UPS12V_GET_ALL_VALUES_3, 0);
+	ret = sendMessage(OPENUPS2_GET_ALL_VALUES_3, 0);
 	recvMessage(recv);
 	parseMessage(recv);
 
-	ret = sendMessage(UPS12V_CLOCK_OUT, 0);
+	ret = sendMessage(OPENUPS2_CLOCK_OUT, 0);
 	recvMessage(recv);
 	parseMessage(recv);
 
@@ -1022,7 +958,7 @@ void HIDOpenUPS2::ReadConfigurationMemory()
 
 	while (m_ulSettingsAddr < SETTINGS_ADDR_END)
 	{
-		sendMessage(UPS12V_MEM_READ_OUT, 4, m_ulSettingsAddr & 0xFF, (m_ulSettingsAddr >> 8) & 0xFF, 0x00, 0x10);
+		sendMessage(OPENUPS2_MEM_READ_OUT, 4, m_ulSettingsAddr & 0xFF, (m_ulSettingsAddr >> 8) & 0xFF, 0x00, 0x10);
 		recvMessage(recv);
 		parseMessage(recv);
 		m_ulSettingsAddr += 16;
@@ -1035,7 +971,7 @@ void HIDOpenUPS2::EraseConfigurationMemory()
 	int ret;
 
 	m_ulSettingsAddr = SETTINGS_ADDR_START;
-	sendMessage(UPS12V_MEM_ERASE, 4, m_ulSettingsAddr & 0xFF, (m_ulSettingsAddr >> 8) & 0xFF, 0x00, 0x40);
+	sendMessage(OPENUPS2_MEM_ERASE, 4, m_ulSettingsAddr & 0xFF, (m_ulSettingsAddr >> 8) & 0xFF, 0x00, 0x40);
 
 	int retries = 5;
 	while ((ret = recvMessage(recv) <= 0) && retries > 0) {
@@ -1059,14 +995,14 @@ void HIDOpenUPS2::WriteConfigurationMemory()
 	m_ulSettingsAddr = SETTINGS_ADDR_START;
 	while (m_ulSettingsAddr < SETTINGS_ADDR_END)
 	{
-		sendMessageWithBuffer(UPS12V_MEM_WRITE_OUT, 16, m_chPackages+(m_ulSettingsAddr-SETTINGS_ADDR_START), 4, m_ulSettingsAddr & 0xFF, (m_ulSettingsAddr >> 8) & 0xFF, 0x00, 0x10);
+		sendMessageWithBuffer(OPENUPS2_MEM_WRITE_OUT, 16, m_chPackages+(m_ulSettingsAddr-SETTINGS_ADDR_START), 4, m_ulSettingsAddr & 0xFF, (m_ulSettingsAddr >> 8) & 0xFF, 0x00, 0x10);
 		ret = recvMessage(recv);
 		
-		if (ret <= 0 || recv[0] != UPS12V_MEM_WRITE_IN) {
+		if (ret <= 0 || recv[0] != OPENUPS2_MEM_WRITE_IN) {
 			fprintf(stderr, "Error (%d, 0x%02x) writing configuration variables , aborting ...\n", ret, recv[0]);
 			break;
 		} else {
-			fprintf(stderr, "Wrote page 0x%lx of configuration\n", m_ulSettingsAddr);
+			//fprintf(stderr, "Wrote page 0x%lx of configuration\n", m_ulSettingsAddr);
 		}		
 		m_ulSettingsAddr += 16;
 	}

@@ -25,6 +25,7 @@ class HIDInterface {
 	public:
 		HIDInterface(USBHID *d);
 		virtual ~HIDInterface();
+		
 		int sendMessageWithBuffer(unsigned char cType, unsigned int buflen, unsigned char* buffer, unsigned int len, ...);
 		int sendMessage(unsigned char cType, unsigned int len, ...);		
 		int sendCommand(unsigned char command, unsigned char value);
@@ -34,18 +35,19 @@ class HIDInterface {
 		int varsToFile(const char *filename, bool withComments);
 		int fileToVars(const char *filename);
 
-		virtual void parseMessage(unsigned char *msg){};
-		virtual void printValues(){};
-		virtual float convertOneValue2Float(unsigned char *buffer, int nLen, int nIndex, int nReadMode, double dMultiplier){};
-		virtual bool readOneValue(char *str, int nReadMode, double dMultiplier, int len, unsigned char &c1, unsigned char &c2, unsigned char &c3, unsigned char &c4){};
-		virtual void convertOneValue2String(char *destination, int nLen, int nIndex, int nReadMode, double dMultiplier){};
-		virtual bool setVariableData(int mesg_no, char *str){};
-		virtual ATXMSG* GetMessages(){};
-		virtual double GetConstant(int i){};
-		virtual unsigned int* GetTermistorConsts(){};
-		virtual unsigned char getUPSVariableData(unsigned int cnt, char *name, char *value, char *unit, char *comment){};
-		virtual void restartUPS(){};
-		virtual void restartUPSInBootloaderMode(){};		
+		virtual void parseMessage(unsigned char *msg) = 0;
+		virtual void printValues() = 0;
+		void printConfiguration();
+		virtual float convertOneValue2Float(unsigned char *buffer, int nLen, int nIndex, int nReadMode, double dMultiplier) = 0;
+		virtual bool readOneValue(char *str, int nReadMode, double dMultiplier, int len, unsigned char &c1, unsigned char &c2, unsigned char &c3, unsigned char &c4) = 0;
+		virtual void convertOneValue2String(char *destination, int nLen, int nIndex, int nReadMode, double dMultiplier) = 0;
+		virtual bool setVariableData(int mesg_no, char *str) = 0;
+		virtual ATXMSG* GetMessages() = 0;
+		virtual double GetConstant(int i) = 0;
+		virtual unsigned int* GetTermistorConsts() = 0;
+		virtual unsigned char getUPSVariableData(unsigned int cnt, char *name, char *value, char *unit, char *comment) = 0;
+		virtual void restartUPS() = 0;
+		virtual void restartUPSInBootloaderMode() = 0;
 
 		unsigned char m_chPackages[SETTINGS_PACKS * 16];
 

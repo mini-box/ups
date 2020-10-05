@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /indevel/minibox-openups/linuxport/openups2
+CMAKE_SOURCE_DIR = /home/panic/Development/openups2
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /indevel/minibox-openups/linuxport/openups2
+CMAKE_BINARY_DIR = /home/panic/Development/openups2
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /indevel/minibox-openups/linuxport/openups2/CMakeFiles /indevel/minibox-openups/linuxport/openups2/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/panic/Development/openups2/CMakeFiles /home/panic/Development/openups2/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /indevel/minibox-openups/linuxport/openups2/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/panic/Development/openups2/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -111,206 +111,179 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named openups2
+# Target rules for targets named openups
 
 # Build rule for target.
-openups2: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 openups2
-.PHONY : openups2
+openups: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 openups
+.PHONY : openups
 
 # fast build rule for target.
-openups2/fast:
-	$(MAKE) -f CMakeFiles/openups2.dir/build.make CMakeFiles/openups2.dir/build
-.PHONY : openups2/fast
+openups/fast:
+	$(MAKE) -f CMakeFiles/openups.dir/build.make CMakeFiles/openups.dir/build
+.PHONY : openups/fast
 
-main.o: main.cpp.o
+src/lib/HIDInterface.o: src/lib/HIDInterface.cpp.o
 
-.PHONY : main.o
-
-# target to build an object file
-main.cpp.o:
-	$(MAKE) -f CMakeFiles/openups2.dir/build.make CMakeFiles/openups2.dir/main.cpp.o
-.PHONY : main.cpp.o
-
-main.i: main.cpp.i
-
-.PHONY : main.i
-
-# target to preprocess a source file
-main.cpp.i:
-	$(MAKE) -f CMakeFiles/openups2.dir/build.make CMakeFiles/openups2.dir/main.cpp.i
-.PHONY : main.cpp.i
-
-main.s: main.cpp.s
-
-.PHONY : main.s
-
-# target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) -f CMakeFiles/openups2.dir/build.make CMakeFiles/openups2.dir/main.cpp.s
-.PHONY : main.cpp.s
-
-utils/HArray.o: utils/HArray.cpp.o
-
-.PHONY : utils/HArray.o
+.PHONY : src/lib/HIDInterface.o
 
 # target to build an object file
-utils/HArray.cpp.o:
-	$(MAKE) -f CMakeFiles/openups2.dir/build.make CMakeFiles/openups2.dir/utils/HArray.cpp.o
-.PHONY : utils/HArray.cpp.o
+src/lib/HIDInterface.cpp.o:
+	$(MAKE) -f CMakeFiles/openups.dir/build.make CMakeFiles/openups.dir/src/lib/HIDInterface.cpp.o
+.PHONY : src/lib/HIDInterface.cpp.o
 
-utils/HArray.i: utils/HArray.cpp.i
+src/lib/HIDInterface.i: src/lib/HIDInterface.cpp.i
 
-.PHONY : utils/HArray.i
+.PHONY : src/lib/HIDInterface.i
 
 # target to preprocess a source file
-utils/HArray.cpp.i:
-	$(MAKE) -f CMakeFiles/openups2.dir/build.make CMakeFiles/openups2.dir/utils/HArray.cpp.i
-.PHONY : utils/HArray.cpp.i
+src/lib/HIDInterface.cpp.i:
+	$(MAKE) -f CMakeFiles/openups.dir/build.make CMakeFiles/openups.dir/src/lib/HIDInterface.cpp.i
+.PHONY : src/lib/HIDInterface.cpp.i
 
-utils/HArray.s: utils/HArray.cpp.s
+src/lib/HIDInterface.s: src/lib/HIDInterface.cpp.s
 
-.PHONY : utils/HArray.s
+.PHONY : src/lib/HIDInterface.s
 
 # target to generate assembly for a file
-utils/HArray.cpp.s:
-	$(MAKE) -f CMakeFiles/openups2.dir/build.make CMakeFiles/openups2.dir/utils/HArray.cpp.s
-.PHONY : utils/HArray.cpp.s
+src/lib/HIDInterface.cpp.s:
+	$(MAKE) -f CMakeFiles/openups.dir/build.make CMakeFiles/openups.dir/src/lib/HIDInterface.cpp.s
+.PHONY : src/lib/HIDInterface.cpp.s
 
-utils/HList.o: utils/HList.cpp.o
+src/lib/HIDOpenUPS2.o: src/lib/HIDOpenUPS2.cpp.o
 
-.PHONY : utils/HList.o
+.PHONY : src/lib/HIDOpenUPS2.o
 
 # target to build an object file
-utils/HList.cpp.o:
-	$(MAKE) -f CMakeFiles/openups2.dir/build.make CMakeFiles/openups2.dir/utils/HList.cpp.o
-.PHONY : utils/HList.cpp.o
+src/lib/HIDOpenUPS2.cpp.o:
+	$(MAKE) -f CMakeFiles/openups.dir/build.make CMakeFiles/openups.dir/src/lib/HIDOpenUPS2.cpp.o
+.PHONY : src/lib/HIDOpenUPS2.cpp.o
 
-utils/HList.i: utils/HList.cpp.i
+src/lib/HIDOpenUPS2.i: src/lib/HIDOpenUPS2.cpp.i
 
-.PHONY : utils/HList.i
+.PHONY : src/lib/HIDOpenUPS2.i
 
 # target to preprocess a source file
-utils/HList.cpp.i:
-	$(MAKE) -f CMakeFiles/openups2.dir/build.make CMakeFiles/openups2.dir/utils/HList.cpp.i
-.PHONY : utils/HList.cpp.i
+src/lib/HIDOpenUPS2.cpp.i:
+	$(MAKE) -f CMakeFiles/openups.dir/build.make CMakeFiles/openups.dir/src/lib/HIDOpenUPS2.cpp.i
+.PHONY : src/lib/HIDOpenUPS2.cpp.i
 
-utils/HList.s: utils/HList.cpp.s
+src/lib/HIDOpenUPS2.s: src/lib/HIDOpenUPS2.cpp.s
 
-.PHONY : utils/HList.s
+.PHONY : src/lib/HIDOpenUPS2.s
 
 # target to generate assembly for a file
-utils/HList.cpp.s:
-	$(MAKE) -f CMakeFiles/openups2.dir/build.make CMakeFiles/openups2.dir/utils/HList.cpp.s
-.PHONY : utils/HList.cpp.s
+src/lib/HIDOpenUPS2.cpp.s:
+	$(MAKE) -f CMakeFiles/openups.dir/build.make CMakeFiles/openups.dir/src/lib/HIDOpenUPS2.cpp.s
+.PHONY : src/lib/HIDOpenUPS2.cpp.s
 
-utils/HLock.o: utils/HLock.cpp.o
+src/lib/usbhid.o: src/lib/usbhid.cpp.o
 
-.PHONY : utils/HLock.o
+.PHONY : src/lib/usbhid.o
 
 # target to build an object file
-utils/HLock.cpp.o:
-	$(MAKE) -f CMakeFiles/openups2.dir/build.make CMakeFiles/openups2.dir/utils/HLock.cpp.o
-.PHONY : utils/HLock.cpp.o
+src/lib/usbhid.cpp.o:
+	$(MAKE) -f CMakeFiles/openups.dir/build.make CMakeFiles/openups.dir/src/lib/usbhid.cpp.o
+.PHONY : src/lib/usbhid.cpp.o
 
-utils/HLock.i: utils/HLock.cpp.i
+src/lib/usbhid.i: src/lib/usbhid.cpp.i
 
-.PHONY : utils/HLock.i
+.PHONY : src/lib/usbhid.i
 
 # target to preprocess a source file
-utils/HLock.cpp.i:
-	$(MAKE) -f CMakeFiles/openups2.dir/build.make CMakeFiles/openups2.dir/utils/HLock.cpp.i
-.PHONY : utils/HLock.cpp.i
+src/lib/usbhid.cpp.i:
+	$(MAKE) -f CMakeFiles/openups.dir/build.make CMakeFiles/openups.dir/src/lib/usbhid.cpp.i
+.PHONY : src/lib/usbhid.cpp.i
 
-utils/HLock.s: utils/HLock.cpp.s
+src/lib/usbhid.s: src/lib/usbhid.cpp.s
 
-.PHONY : utils/HLock.s
+.PHONY : src/lib/usbhid.s
 
 # target to generate assembly for a file
-utils/HLock.cpp.s:
-	$(MAKE) -f CMakeFiles/openups2.dir/build.make CMakeFiles/openups2.dir/utils/HLock.cpp.s
-.PHONY : utils/HLock.cpp.s
+src/lib/usbhid.cpp.s:
+	$(MAKE) -f CMakeFiles/openups.dir/build.make CMakeFiles/openups.dir/src/lib/usbhid.cpp.s
+.PHONY : src/lib/usbhid.cpp.s
 
-utils/HThread.o: utils/HThread.cpp.o
+src/main.o: src/main.cpp.o
 
-.PHONY : utils/HThread.o
+.PHONY : src/main.o
 
 # target to build an object file
-utils/HThread.cpp.o:
-	$(MAKE) -f CMakeFiles/openups2.dir/build.make CMakeFiles/openups2.dir/utils/HThread.cpp.o
-.PHONY : utils/HThread.cpp.o
+src/main.cpp.o:
+	$(MAKE) -f CMakeFiles/openups.dir/build.make CMakeFiles/openups.dir/src/main.cpp.o
+.PHONY : src/main.cpp.o
 
-utils/HThread.i: utils/HThread.cpp.i
+src/main.i: src/main.cpp.i
 
-.PHONY : utils/HThread.i
+.PHONY : src/main.i
 
 # target to preprocess a source file
-utils/HThread.cpp.i:
-	$(MAKE) -f CMakeFiles/openups2.dir/build.make CMakeFiles/openups2.dir/utils/HThread.cpp.i
-.PHONY : utils/HThread.cpp.i
+src/main.cpp.i:
+	$(MAKE) -f CMakeFiles/openups.dir/build.make CMakeFiles/openups.dir/src/main.cpp.i
+.PHONY : src/main.cpp.i
 
-utils/HThread.s: utils/HThread.cpp.s
+src/main.s: src/main.cpp.s
 
-.PHONY : utils/HThread.s
+.PHONY : src/main.s
 
 # target to generate assembly for a file
-utils/HThread.cpp.s:
-	$(MAKE) -f CMakeFiles/openups2.dir/build.make CMakeFiles/openups2.dir/utils/HThread.cpp.s
-.PHONY : utils/HThread.cpp.s
+src/main.cpp.s:
+	$(MAKE) -f CMakeFiles/openups.dir/build.make CMakeFiles/openups.dir/src/main.cpp.s
+.PHONY : src/main.cpp.s
 
-utils/TxFile.o: utils/TxFile.cpp.o
+src/utils/HArray.o: src/utils/HArray.cpp.o
 
-.PHONY : utils/TxFile.o
+.PHONY : src/utils/HArray.o
 
 # target to build an object file
-utils/TxFile.cpp.o:
-	$(MAKE) -f CMakeFiles/openups2.dir/build.make CMakeFiles/openups2.dir/utils/TxFile.cpp.o
-.PHONY : utils/TxFile.cpp.o
+src/utils/HArray.cpp.o:
+	$(MAKE) -f CMakeFiles/openups.dir/build.make CMakeFiles/openups.dir/src/utils/HArray.cpp.o
+.PHONY : src/utils/HArray.cpp.o
 
-utils/TxFile.i: utils/TxFile.cpp.i
+src/utils/HArray.i: src/utils/HArray.cpp.i
 
-.PHONY : utils/TxFile.i
+.PHONY : src/utils/HArray.i
 
 # target to preprocess a source file
-utils/TxFile.cpp.i:
-	$(MAKE) -f CMakeFiles/openups2.dir/build.make CMakeFiles/openups2.dir/utils/TxFile.cpp.i
-.PHONY : utils/TxFile.cpp.i
+src/utils/HArray.cpp.i:
+	$(MAKE) -f CMakeFiles/openups.dir/build.make CMakeFiles/openups.dir/src/utils/HArray.cpp.i
+.PHONY : src/utils/HArray.cpp.i
 
-utils/TxFile.s: utils/TxFile.cpp.s
+src/utils/HArray.s: src/utils/HArray.cpp.s
 
-.PHONY : utils/TxFile.s
+.PHONY : src/utils/HArray.s
 
 # target to generate assembly for a file
-utils/TxFile.cpp.s:
-	$(MAKE) -f CMakeFiles/openups2.dir/build.make CMakeFiles/openups2.dir/utils/TxFile.cpp.s
-.PHONY : utils/TxFile.cpp.s
+src/utils/HArray.cpp.s:
+	$(MAKE) -f CMakeFiles/openups.dir/build.make CMakeFiles/openups.dir/src/utils/HArray.cpp.s
+.PHONY : src/utils/HArray.cpp.s
 
-utils/stdafx.o: utils/stdafx.cpp.o
+src/utils/util.o: src/utils/util.cpp.o
 
-.PHONY : utils/stdafx.o
+.PHONY : src/utils/util.o
 
 # target to build an object file
-utils/stdafx.cpp.o:
-	$(MAKE) -f CMakeFiles/openups2.dir/build.make CMakeFiles/openups2.dir/utils/stdafx.cpp.o
-.PHONY : utils/stdafx.cpp.o
+src/utils/util.cpp.o:
+	$(MAKE) -f CMakeFiles/openups.dir/build.make CMakeFiles/openups.dir/src/utils/util.cpp.o
+.PHONY : src/utils/util.cpp.o
 
-utils/stdafx.i: utils/stdafx.cpp.i
+src/utils/util.i: src/utils/util.cpp.i
 
-.PHONY : utils/stdafx.i
+.PHONY : src/utils/util.i
 
 # target to preprocess a source file
-utils/stdafx.cpp.i:
-	$(MAKE) -f CMakeFiles/openups2.dir/build.make CMakeFiles/openups2.dir/utils/stdafx.cpp.i
-.PHONY : utils/stdafx.cpp.i
+src/utils/util.cpp.i:
+	$(MAKE) -f CMakeFiles/openups.dir/build.make CMakeFiles/openups.dir/src/utils/util.cpp.i
+.PHONY : src/utils/util.cpp.i
 
-utils/stdafx.s: utils/stdafx.cpp.s
+src/utils/util.s: src/utils/util.cpp.s
 
-.PHONY : utils/stdafx.s
+.PHONY : src/utils/util.s
 
 # target to generate assembly for a file
-utils/stdafx.cpp.s:
-	$(MAKE) -f CMakeFiles/openups2.dir/build.make CMakeFiles/openups2.dir/utils/stdafx.cpp.s
-.PHONY : utils/stdafx.cpp.s
+src/utils/util.cpp.s:
+	$(MAKE) -f CMakeFiles/openups.dir/build.make CMakeFiles/openups.dir/src/utils/util.cpp.s
+.PHONY : src/utils/util.cpp.s
 
 # Help Target
 help:
@@ -319,29 +292,26 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... openups2"
+	@echo "... openups"
 	@echo "... edit_cache"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
-	@echo "... utils/HArray.o"
-	@echo "... utils/HArray.i"
-	@echo "... utils/HArray.s"
-	@echo "... utils/HList.o"
-	@echo "... utils/HList.i"
-	@echo "... utils/HList.s"
-	@echo "... utils/HLock.o"
-	@echo "... utils/HLock.i"
-	@echo "... utils/HLock.s"
-	@echo "... utils/HThread.o"
-	@echo "... utils/HThread.i"
-	@echo "... utils/HThread.s"
-	@echo "... utils/TxFile.o"
-	@echo "... utils/TxFile.i"
-	@echo "... utils/TxFile.s"
-	@echo "... utils/stdafx.o"
-	@echo "... utils/stdafx.i"
-	@echo "... utils/stdafx.s"
+	@echo "... src/lib/HIDInterface.o"
+	@echo "... src/lib/HIDInterface.i"
+	@echo "... src/lib/HIDInterface.s"
+	@echo "... src/lib/HIDOpenUPS2.o"
+	@echo "... src/lib/HIDOpenUPS2.i"
+	@echo "... src/lib/HIDOpenUPS2.s"
+	@echo "... src/lib/usbhid.o"
+	@echo "... src/lib/usbhid.i"
+	@echo "... src/lib/usbhid.s"
+	@echo "... src/main.o"
+	@echo "... src/main.i"
+	@echo "... src/main.s"
+	@echo "... src/utils/HArray.o"
+	@echo "... src/utils/HArray.i"
+	@echo "... src/utils/HArray.s"
+	@echo "... src/utils/util.o"
+	@echo "... src/utils/util.i"
+	@echo "... src/utils/util.s"
 .PHONY : help
 
 
