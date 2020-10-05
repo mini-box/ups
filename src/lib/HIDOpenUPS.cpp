@@ -147,7 +147,8 @@ unsigned int g_OpenUPS_memTerm[]={	 (unsigned int)0x31,(unsigned int)0x40,(unsig
 
 HIDOpenUPS::HIDOpenUPS(USBHID *d): HIDInterface(d)
 {
-	
+	m_ulSettingsAddr = SETTINGS_ADDR_START;
+	memset(m_chPackages, 0, SETTINGS_PACKS * 16);	
 }
 
 HIDOpenUPS::~HIDOpenUPS()
@@ -265,7 +266,7 @@ void HIDOpenUPS::WriteConfigurationMemory()
 			fprintf(stderr, "Error (%d, 0x%02x) writing configuration variables , aborting ...\n", ret, recv[0]);
 			break;
 		} else {
-			//fprintf(stderr, "Wrote page 0x%lx of configuration\n", m_ulSettingsAddr);
+			fprintf(stderr, "Wrote page 0x%lx of configuration\n", m_ulSettingsAddr);
 		}		
 		m_ulSettingsAddr += 16;
 	}

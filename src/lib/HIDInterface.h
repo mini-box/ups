@@ -25,6 +25,11 @@ class HIDInterface {
 	public:
 		HIDInterface(USBHID *d);
 		virtual ~HIDInterface();
+
+		virtual void GetStatus() = 0;
+		virtual void ReadConfigurationMemory() = 0;
+		virtual void EraseConfigurationMemory() = 0;
+		virtual void WriteConfigurationMemory() = 0;
 		
 		int sendMessageWithBuffer(unsigned char cType, unsigned int buflen, unsigned char* buffer, unsigned int len, ...);
 		int sendMessage(unsigned char cType, unsigned int len, ...);		
@@ -37,7 +42,7 @@ class HIDInterface {
 
 		virtual void parseMessage(unsigned char *msg) = 0;
 		virtual void printValues() = 0;
-		void printConfiguration();
+		void printConfiguration(bool withComments);
 		virtual float convertOneValue2Float(unsigned char *buffer, int nLen, int nIndex, int nReadMode, double dMultiplier) = 0;
 		virtual bool readOneValue(char *str, int nReadMode, double dMultiplier, int len, unsigned char &c1, unsigned char &c2, unsigned char &c3, unsigned char &c4) = 0;
 		virtual void convertOneValue2String(char *destination, int nLen, int nIndex, int nReadMode, double dMultiplier) = 0;

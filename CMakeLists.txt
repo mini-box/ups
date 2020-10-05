@@ -25,7 +25,7 @@ target_link_libraries(openups
 usb
 )
 
-#install(
-#  TARGETS openups
-#  DESTINATION bin
-#  )
+install(
+  TARGETS openups
+  DESTINATION bin
+  )

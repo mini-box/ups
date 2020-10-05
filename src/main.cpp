@@ -10,6 +10,11 @@
 #include <strings.h>
 #include <ctype.h>
 
+#define MINIBOX_VENDOR_ID	0x04d8
+
+#define OPENUPS_PRODUCT_ID	0xd004
+#define OPENUPS2_PRODUCT_ID	0xd005
+#define NUCUPS_PRODUCT_ID	0xd007
 
 struct deviceId {
 	const char *name;
@@ -22,20 +27,20 @@ static const struct deviceId deviceIds[] = {
 	{
 		"openups",
 		"Open UPS",
-		0x04d8,
-		0xd004
+		MINIBOX_VENDOR_ID,
+		OPENUPS_PRODUCT_ID
 	},
 	{
 		"openups2",
 		"Open UPS2",
-		0x04d8,
-		0xd005
+		MINIBOX_VENDOR_ID,
+		OPENUPS2_PRODUCT_ID
 	},
 	{
 		"nucups",
 		"DC-DC NUC UPS",
-		0x04d8,
-		0xd007
+		MINIBOX_VENDOR_ID,
+		NUCUPS_PRODUCT_ID
 	},
 	{}
 };
@@ -56,7 +61,10 @@ int usage(char *progname)
 	fprintf(stderr,
                 "Usage: %s [<options>]\n"
                 "Options:\n"
-                "  -t <device type>:     Select openups, openups2 or nucups as device type\n"                
+                "  -t <device type>: Select openups, openups2 or nucups as device type\n"
+				"  -i <input file>:  Write settings from this file\n"
+				"  -o <device type>: Dump settings to this file\n"
+				"  -c:     			 Add comments for each configuration variable to output file\n"
                 "\n",
                 progname);
         return 3;
@@ -68,16 +76,28 @@ int main(int argc, char **argv)
 	int ret, c;
 	char *progname = basename(argv[0]);
 	char *devicetype = NULL;
+	char *infile = NULL;
+	char *outfile = NULL;
+	bool withComments = false;
 
 	if (argc < 2)
 		return usage(progname);
 
-	while ((c = getopt(argc, argv, "t:h")) != -1) {		
+	while ((c = getopt(argc, argv, "t:i:o:ch")) != -1) {		
 		switch (c) {
 			
 			case 't':
 				devicetype = optarg;
-				break;			
+				break;
+			case 'i':
+				infile = optarg;
+				break;
+			case 'o':
+				outfile = optarg;
+				break;
+			case 'c':
+				withComments = true;
+				break;
 			case 'h':
 				usage(progname);
 				break;
@@ -106,121 +126,47 @@ int main(int argc, char **argv)
 	d->open();
 	if (!d->isOpened())
 	{
+		fprintf(stderr, "Failed to open USB device\n");
 		return 2;
 	}
 
-	//HIDOpenUPS2 *ups = new HIDOpenUPS2(d);
-	HIDOpenUPS *ups = new HIDOpenUPS(d);
+	HIDInterface *ups;
+
+	if (devid->productid == OPENUPS_PRODUCT_ID) {
+		ups = new HIDOpenUPS(d);
+	} else if (devid->productid == OPENUPS2_PRODUCT_ID) {
+		ups = new HIDOpenUPS2(d);
+	}
+
 	/* After opening wait 1 second before querying the device */
 	usleep(1000);
+	
 	ups->GetStatus();
-
-
+	
 	ups->ReadConfigurationMemory();
 	fprintf(stderr, "Read configuration\n");
-	ups->printConfiguration();
+	ups->printConfiguration(withComments);
 	
-
-	ups->varsToFile("settings.cfg.before", false);
-	fprintf(stderr, "Saved to file\n");
-
-
-	ups->EraseConfigurationMemory();
-	fprintf(stderr, "Erase configuration\n");
-
-	ups->fileToVars("settings.cfg.changed");
-	fprintf(stderr, "Loaded file\n");
+	if (outfile) {
+		ups->varsToFile("settings.cfg.before", withComments);
+		fprintf(stderr, "Saved configuration to file: %s\n", outfile);
+	}
 	
-	ups->WriteConfigurationMemory();
-	fprintf(stderr, "Wrote configuration\n");
-	
-	ups->varsToFile("settings.cfg.after", false);
-	
-	ups->restartUPS();
+	if (infile) {
+		ups->EraseConfigurationMemory();
+		fprintf(stderr, "Erased configuration\n");
 
+		ups->fileToVars(infile);
+		fprintf(stderr, "Loaded configuration file: %s\n", infile);
+	
+		ups->WriteConfigurationMemory();
+		fprintf(stderr, "Wrote configuration\n");
+	
+		//ups->varsToFile("settings.cfg.after", false);	
+		ups->restartUPS();
+		fprintf(stderr, "Restarted UPS\n");
+	}
+	
 	d->close();
 	return 0;
 }
-
-
-
-
-	/* Read device configuration variables */
-/*	
-	m_ulSettingsAddr = SETTINGS_ADDR_START;
-	memset(m_chPackages, 0, SETTINGS_PACKS * 16);
-
-	while (m_ulSettingsAddr < SETTINGS_ADDR_END)
-	{
-		sendMessage(d, OPENUPS2_MEM_READ_OUT, 4, m_ulSettingsAddr & 0xFF, (m_ulSettingsAddr >> 8) & 0xFF, 0x00, 0x10);
-		recvMessage(d, recv);
-		parseMessage(recv);
-		m_ulSettingsAddr += 16;
-	}
-*/
-	/* Erase device configuration variables */
-/*	
-	m_ulSettingsAddr = SETTINGS_ADDR_START;
-	sendMessage(d, OPENUPS2_MEM_ERASE, 4, m_ulSettingsAddr & 0xFF, (m_ulSettingsAddr >> 8) & 0xFF, 0x00, 0x40);
-
-	int retries = 5;
-	while ((ret = recvMessage(d, recv) <= 0) && retries > 0) {
-		retries--;
-		usleep(500);
-		fprintf(stderr, "Erase 0x%02x retry %d/5\n", recv[0], retries);
-	}
-
-	if (retries <= 0) {
-		fprintf(stderr, "Error waiting for erase operation to finish\n");
-	} else {
-		fprintf(stderr, "Successfully erased (0x%02x) configuration memory\n", recv[0]);
-	}
-*/
-	/* Dump configuration variables */
-/*
-	int var_max = 256;
-	char name[256];
-	char unit[64];
-	char value[256];
-	char comment[1024];
-
-	for (int i = 0; i < var_max; i++)
-	{
-		if (getUPSVariableData(i, name, value, unit, comment))
-		{
-			fprintf(stderr, "%d. %s: %s %s %s\n", i, name, value, unit, comment);
-			fprintf(stderr, "%s\n", "---------------------------------------------------------------------------------------------------------------");
-		}
-	}
-
-
-	varsToFile("settings.cfg.before", false);
-	fileToVars("settings.cfg.changed");	
-*/	
-	/* Write device configuration variables */
-/*	
-	m_ulSettingsAddr = SETTINGS_ADDR_START;
-	while (m_ulSettingsAddr < SETTINGS_ADDR_END)
-	{
-		sendMessageWithBuffer(d, OPENUPS2_MEM_WRITE_OUT, 16, m_chPackages+(m_ulSettingsAddr-SETTINGS_ADDR_START), 4, m_ulSettingsAddr & 0xFF, (m_ulSettingsAddr >> 8) & 0xFF, 0x00, 0x10);
-		ret = recvMessage(d, recv);
-		
-		if (ret <= 0 || recv[0] != OPENUPS2_MEM_WRITE_IN) {
-			fprintf(stderr, "Error (%d, 0x%02x) writing configuration variables , aborting ...\n", ret, recv[0]);
-			break;
-		} else {
-			fprintf(stderr, "Wrote page 0x%lx of configuration\n", m_ulSettingsAddr);
-		}
-		
-		m_ulSettingsAddr += 16;
-	}
-
-	varsToFile("settings.cfg.after", false);
-*/	
-
-
-/*	
-	restartUPS(d);
-	recvMessage(d, recv);
-	fprintf(stderr, "Restart UPS returned: 0x%02x\n", recv[0]);
-	*/

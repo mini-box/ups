@@ -18,7 +18,7 @@ HIDInterface::~HIDInterface() {
 	
 }
 
-void HIDInterface::printConfiguration()
+void HIDInterface::printConfiguration(bool withComments)
 {
 	int var_max = 256;
 	char name[256];
@@ -30,8 +30,12 @@ void HIDInterface::printConfiguration()
 	{
 		if (getUPSVariableData(i, name, value, unit, comment))
 		{
-			fprintf(stderr, "%d. %s: %s # %s %s\n", i, name, value, unit, comment);
-			fprintf(stderr, "%s\n", "---------------------------------------------------------------------------------------------------------------");
+			if (withComments) {
+				fprintf(stderr, "%d. %s: %s # %s %s\n", i, name, value, unit, comment);
+				fprintf(stderr, "%s\n", "---------------------------------------------------------------------------------------------------------------");
+			} else {
+				fprintf(stderr, "%s=%s\n", name, value);
+			}			
 		}
 	}
 }
@@ -185,6 +189,7 @@ int HIDInterface::fileToVars(const char *filename) {
 	FILE *f = fopen(filename, "r");
 
 	if (!f) {
+		fprintf(stderr, "Failed to open %s for writting\n", filename);
 		return -2;
 	}
 
@@ -218,7 +223,7 @@ int HIDInterface::fileToVars(const char *filename) {
 			continue;
         }
 		if (sscanf(line, "%32[^=]=%32[^\n]%*c", name, val) == 2){
-			// fprintf(stderr, "Found var: %s value: %s\n", name, val);
+			fprintf(stderr, "Found var: %s value: %s\n", name, val);
 			int idx;
 			idx = GetMessageIdxByName(name);
 			if (idx > 0) {
