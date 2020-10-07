@@ -1,8 +1,10 @@
+#include "version.h"
 #include "util.h"
 #include "usbhid.h"
 #include "HArray.h"
 #include "HIDOpenUPS.h"
 #include "HIDOpenUPS2.h"
+#include "HIDNUCUPS.h"
 #include "HIDInterface.h"
 
 #include <stdarg.h>
@@ -62,9 +64,10 @@ int usage(char *progname)
                 "Usage: %s [<options>]\n"
                 "Options:\n"
                 "  -t <device type>: Select openups, openups2 or nucups as device type\n"
-				"  -i <input file>:  Write settings from this file\n"
-				"  -o <device type>: Dump settings to this file\n"
-				"  -c:     			 Add comments for each configuration variable to output file\n"
+				"  -i <input file>:  Write settings from this file. Warning: Will reboot UPS!\n"
+				"  -o <output file>: Dump settings to this file\n"
+				"  -c:               Add comments for each configuration variable to output file\n"
+				"  -n:               Only output status don't show configuration variables\n"
                 "\n",
                 progname);
         return 3;
@@ -79,11 +82,12 @@ int main(int argc, char **argv)
 	char *infile = NULL;
 	char *outfile = NULL;
 	bool withComments = false;
+	bool withConfiguration = true;
 
 	if (argc < 2)
 		return usage(progname);
 
-	while ((c = getopt(argc, argv, "t:i:o:ch")) != -1) {		
+	while ((c = getopt(argc, argv, "t:i:o:cnh")) != -1) {		
 		switch (c) {
 			
 			case 't':
@@ -97,6 +101,9 @@ int main(int argc, char **argv)
 				break;
 			case 'c':
 				withComments = true;
+				break;
+			case 'n':
+				withConfiguration = false;
 				break;
 			case 'h':
 				usage(progname);
@@ -115,10 +122,10 @@ int main(int argc, char **argv)
 	const struct deviceId *devid = findDeviceByName(devicetype);
 
 	if (devid == NULL) {
-		fprintf(stderr, "Device '%s' not found\n", devicetype);
+		fprintf(stderr, "Device '%s' unknown\n", devicetype);
 		return 1;
 	} else {
-		fprintf(stderr, "Found device %s: %s\n", devid->name, devid->desc);
+		fprintf(stderr, "Selected device %s: %s\n", devid->name, devid->desc);
 	}
 
 	USBHID *d = new USBHID(devid->vendorid, devid->productid);
@@ -136,6 +143,12 @@ int main(int argc, char **argv)
 		ups = new HIDOpenUPS(d);
 	} else if (devid->productid == OPENUPS2_PRODUCT_ID) {
 		ups = new HIDOpenUPS2(d);
+	} else if (devid->productid == NUCUPS_PRODUCT_ID) {
+		ups = new  HIDNUCUPS(d);
+	} else {
+		fprintf(stderr, "Unknown product id !");
+		d->close();
+		return 3;
 	}
 
 	/* After opening wait 1 second before querying the device */
@@ -144,27 +157,28 @@ int main(int argc, char **argv)
 	ups->GetStatus();
 	
 	ups->ReadConfigurationMemory();
-	fprintf(stderr, "Read configuration\n");
-	ups->printConfiguration(withComments);
+	fprintf(stdout, "Read configuration\n");
+	if (withConfiguration)
+		ups->printConfiguration(withComments);
 	
 	if (outfile) {
-		ups->varsToFile("settings.cfg.before", withComments);
-		fprintf(stderr, "Saved configuration to file: %s\n", outfile);
+		ups->varsToFile(outfile, withComments);
+		fprintf(stdout, "Saved configuration to file: %s\n", outfile);
 	}
 	
 	if (infile) {
 		ups->EraseConfigurationMemory();
-		fprintf(stderr, "Erased configuration\n");
+		fprintf(stdout, "Erased configuration\n");
 
 		ups->fileToVars(infile);
-		fprintf(stderr, "Loaded configuration file: %s\n", infile);
+		fprintf(stdout, "Loaded configuration file: %s\n", infile);
 	
 		ups->WriteConfigurationMemory();
-		fprintf(stderr, "Wrote configuration\n");
+		fprintf(stdout, "Wrote configuration\n");
 	
 		//ups->varsToFile("settings.cfg.after", false);	
 		ups->restartUPS();
-		fprintf(stderr, "Restarted UPS\n");
+		fprintf(stdout, "Restarted UPS\n");
 	}
 	
 	d->close();

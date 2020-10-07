@@ -130,10 +130,6 @@
 
 #define TERMISTOR_CONSTS 34
 
-#define SETTINGS_ADDR_START			0x007800
-#define SETTINGS_ADDR_END			0x007C00
-#define SETTINGS_ADDR_CALIBR_START  0x0078D0
-#define SETTINGS_ADDR_CALIBR_END    0x007900
 #define SETTINGS_PACKS 64
 #define SCRIPTS_PACKS 4
 #define SCRIPT_START_ADDR			0x3C00//3F80
@@ -146,8 +142,6 @@ public:
 	HIDOpenUPS2(USBHID *d);
 	virtual ~HIDOpenUPS2();
 	
-	int sendCommand(unsigned char command, unsigned char value);
-	int sendCommandEx(unsigned char command, unsigned char value1, unsigned char value2);
 	void parseMessage(unsigned char *msg);
 	void printValues();
 	void printConfiguration();
@@ -209,9 +203,6 @@ public:
 	unsigned char m_chStateMachine;
 	unsigned char m_nLoadCfgStatus;
 	unsigned char m_nSaveCfgStatus;
-
-	unsigned long m_ulSettingsAddr;
-	unsigned char m_chPackages[SETTINGS_PACKS * 16];
 };
 
 #endif

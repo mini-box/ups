@@ -129,21 +129,9 @@
 
 #define TERMISTOR_CONSTS 34
 
-#define SETTINGS_ADDR_START			0x007800
-#define SETTINGS_ADDR_END			0x007C00
-#define SETTINGS_ADDR_CALIBR_START  0x0078D0
-#define SETTINGS_ADDR_CALIBR_END    0x007900
-#define SETTINGS_PACKS 64
 #define SCRIPTS_PACKS 4
 #define SCRIPT_START_ADDR			0x3C00//3F80
 #define SCRIPT_END_ADDR				0x3FB0
-
-struct UVP
-{
-	unsigned char nCVR_1;
-	unsigned char nCVR_2;
-	double fVoltage;
-};
 
 class HIDOpenUPS : public HIDInterface
 {
@@ -206,7 +194,6 @@ public:
 	float m_fOutputPower;
 
 	unsigned char m_nOtherState[7];
-	unsigned long m_ulSettingsAddr;
 };
 
 #endif

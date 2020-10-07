@@ -6,6 +6,7 @@ src/main.cpp
 src/lib/usbhid.cpp
 src/lib/HIDOpenUPS.cpp
 src/lib/HIDOpenUPS2.cpp
+src/lib/HIDNUCUPS.cpp
 src/lib/HIDInterface.cpp
 src/utils/util.cpp
 src/utils/HArray.cpp 

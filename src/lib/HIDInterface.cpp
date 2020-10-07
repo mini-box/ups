@@ -12,6 +12,7 @@
 
 HIDInterface::HIDInterface(USBHID *hidDevice) {
 	d = hidDevice;
+	memset(m_chPackages, 0, SETTINGS_PACKS * 16);
 }
 
 HIDInterface::~HIDInterface() {
@@ -31,10 +32,10 @@ void HIDInterface::printConfiguration(bool withComments)
 		if (getUPSVariableData(i, name, value, unit, comment))
 		{
 			if (withComments) {
-				fprintf(stderr, "%d. %s: %s # %s %s\n", i, name, value, unit, comment);
-				fprintf(stderr, "%s\n", "---------------------------------------------------------------------------------------------------------------");
+				fprintf(stdout, "%d. %s: %s # %s %s\n", i, name, value, unit, comment);
+				fprintf(stdout, "%s\n", "---------------------------------------------------------------------------------------------------------------");
 			} else {
-				fprintf(stderr, "%s=%s\n", name, value);
+				fprintf(stdout, "%s=%s\n", name, value);
 			}			
 		}
 	}
@@ -93,11 +94,11 @@ int HIDInterface::sendMessage(unsigned char cType, unsigned int len, ...)
 
 int HIDInterface::sendCommand(unsigned char command, unsigned char value)
 {
-	return sendMessage(OPENUPS2_CMD_OUT, 3, command, value, 0);
+	return sendMessage(COMMON_CMD_OUT, 3, command, value, 0); // OpenUPS, OpenUPS2 and NUCUPS share same CMD_OUT value
 }
 int HIDInterface::sendCommandEx(unsigned char command, unsigned char value1, unsigned char value2)
 {
-	return sendMessage(OPENUPS2_CMD_OUT, 3, command, value1, value2);
+	return sendMessage(COMMON_CMD_OUT, 3, command, value1, value2);
 }
 
 int HIDInterface::recvMessage(unsigned char *buffer)
@@ -223,12 +224,12 @@ int HIDInterface::fileToVars(const char *filename) {
 			continue;
         }
 		if (sscanf(line, "%32[^=]=%32[^\n]%*c", name, val) == 2){
-			fprintf(stderr, "Found var: %s value: %s\n", name, val);
+			fprintf(stdout, "Found var: %s value: %s\n", name, val);
 			int idx;
 			idx = GetMessageIdxByName(name);
 			if (idx > 0) {
 				if (setVariableData(idx, val)) {
-					fprintf(stderr, "Succesfully set %s to %s\n", name, val);
+					fprintf(stdout, "Succesfully set %s to %s\n", name, val);
 				} else {
 					fprintf(stderr, "Error setting %s to %s\n", name, val);
 				}				
@@ -236,7 +237,7 @@ int HIDInterface::fileToVars(const char *filename) {
 			vars++;
 		} 
 	}
-	fprintf(stderr, "Found %d vars\n", vars);
+	fprintf(stdout, "Found %d vars\n", vars);
 	fclose(f);
 
 	return 0;

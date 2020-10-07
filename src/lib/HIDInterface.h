@@ -3,6 +3,15 @@
 
 #include "usbhid.h"
 
+#define COMMON_CMD_OUT					0xB1
+#define COMMON_CMD_IN					0xB2
+
+#define SETTINGS_ADDR_START			0x007800
+#define SETTINGS_ADDR_END			0x007C00
+#define SETTINGS_ADDR_CALIBR_START  0x0078D0
+#define SETTINGS_ADDR_CALIBR_END    0x007900
+#define SETTINGS_PACKS 64
+
 #define DBG_LEN 25 //4 + 17 + 4
 #define SETTINGS_PACKS 64
 #define MAX_MESSAGE_CNT 256
@@ -15,11 +24,20 @@ struct ATXMSG
 	bool bEnabled; // enabled to write or just to read
 	int nReadMode; // 1=normal, 2=float, 3=hh:mm:ss
 	double	 dMultiplier;
+	double   dLimitMin;
+	double   dLimitMax;
 	const char*  strText; // description/comment
 	const char*  strUnit; // measurement unit
 };
 typedef ATXMSG _ATXMSG;
 
+
+struct UVP
+{
+	unsigned char nCVR_1;
+	unsigned char nCVR_2;
+	double fVoltage;
+};
 
 class HIDInterface {
 	public:
@@ -54,6 +72,7 @@ class HIDInterface {
 		virtual void restartUPS() = 0;
 		virtual void restartUPSInBootloaderMode() = 0;
 
+		unsigned long m_ulSettingsAddr;
 		unsigned char m_chPackages[SETTINGS_PACKS * 16];
 
 		USBHID *d;
