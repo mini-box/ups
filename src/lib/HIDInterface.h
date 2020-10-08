@@ -57,10 +57,10 @@ class HIDInterface {
 		int GetMessageIdxByName(const char* name);
 		int varsToFile(const char *filename, bool withComments);
 		int fileToVars(const char *filename);
+		void printConfiguration(bool withComments);
 
 		virtual void parseMessage(unsigned char *msg) = 0;
 		virtual void printValues() = 0;
-		void printConfiguration(bool withComments);
 		virtual float convertOneValue2Float(unsigned char *buffer, int nLen, int nIndex, int nReadMode, double dMultiplier) = 0;
 		virtual bool readOneValue(char *str, int nReadMode, double dMultiplier, int len, unsigned char &c1, unsigned char &c2, unsigned char &c3, unsigned char &c4) = 0;
 		virtual void convertOneValue2String(char *destination, int nLen, int nIndex, int nReadMode, double dMultiplier) = 0;

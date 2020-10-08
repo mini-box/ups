@@ -71,8 +71,8 @@ ATXMSG g_OpenUPS2_memMessages[MAX_MESSAGE_CNT] =
 		{60, 2, _T("BAL_VCELL_MIN"), true, 10, 6, 0, 0, _T("Balancing is allowed  if cell voltages are above this value.\r\nDefault is 3.32V"), _T("[V]")},
 		{62, 1, _T("BAL_VCELL_DIFF_START"), true, 10, 6, 0, 0, _T("If the voltage difference between cells exceeds this value start balancing the cells.\r\nDefault is 70mV."), _T("[V]")},
 		{63, 1, _T("BAL_VCELL_DIFF_STOP"), true, 10, 6, 0, 0, _T("If the voltage difference between cells is less than this value stop balancing the cells.\r\nDefault is 40mV."), _T("[V]")},
-		/**/ {32, 2, _T("BAL_ENABLE_TOUT"), true, 1, 5, 0, 0, _T("Balancing enable timeout (FW 1.5+)\r\nDefault 72000 min."), _T("[min]")},
-		/**/ {34, 2, _T("BAL_DISABLE_TOUT"), true, 1, 5, 0, 0, _T("Balancing disable timeout (FW 1.5+)\r\nDefault 1440 min."), _T("[min]")},
+		/* {32, 2, _T("BAL_ENABLE_TOUT"), true, 1, 5, 0, 0, _T("Balancing enable timeout (FW 1.5+)\r\nDefault 72000 min."), _T("[min]")}, */
+		/* {34, 2, _T("BAL_DISABLE_TOUT"), true, 1, 5, 0, 0, _T("Balancing disable timeout (FW 1.5+)\r\nDefault 1440 min."), _T("[min]")}, */
 
 		{64, 2, _T("OUT_VOLTAGE"), true, /*7*/ 10, 1, 0, 0, _T("The output voltage. Bit0 in UPS_CONFIG parameter should be set to �1� in order this parameter has effect.\r\nDefault is 12V."), _T("[V]")},
 		/**/ {59, 1, _T("OUT_STARTVOLTAGE_OFFSET"), true, 1, 1, 0, 0, _T("Soft start output voltage offset"), _T("[nr]")},

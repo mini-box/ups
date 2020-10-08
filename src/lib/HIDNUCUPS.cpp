@@ -440,7 +440,7 @@ float HIDNUCUPS::convertOneValue2Float(unsigned char *buffer, int nLen, int nInd
 
 bool HIDNUCUPS::readOneValue(char *str, int nReadMode, double dMultiplier, int len, unsigned char &c1, unsigned char &c2, unsigned char &c3, unsigned char &c4)
 {
-
+    return false;
 }
 
 bool HIDNUCUPS::readOneValue(int mesg_no, char* str, int nReadMode, double dMultiplier, int len, double dMin, double dMax, unsigned char &c1, unsigned char &c2, unsigned char &c3, unsigned char &c4) 

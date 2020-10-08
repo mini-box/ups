@@ -162,7 +162,7 @@ public:
 	double GetVoltageVBat(unsigned char rp1, unsigned rp2);
 	unsigned short GetDataVBat(double vout);
 
-
+private:
 	float m_fVIN;
 	float m_fVBat;
 	float m_fVOut;

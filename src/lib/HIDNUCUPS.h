@@ -98,6 +98,7 @@ class HIDNUCUPS: public HIDInterface {
 		void restartUPS();
 		void restartUPSInBootloaderMode();
 
+private:
 		unsigned int m_nInput;
 		unsigned int m_nOutput;
 		unsigned int m_nChargerFlags;

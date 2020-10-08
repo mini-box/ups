@@ -166,7 +166,7 @@ public:
 	void WriteConfigurationMemory();
 
 
-
+private:
 	float m_fVIN;
 	float m_fVBat;
 	float m_fVOut;

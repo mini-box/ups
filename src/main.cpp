@@ -67,7 +67,7 @@ int usage(char *progname)
 				"  -i <input file>:  Write settings from this file. Warning: Will reboot UPS!\n"
 				"  -o <output file>: Dump settings to this file\n"
 				"  -c:               Add comments for each configuration variable to output file\n"
-				"  -n:               Only output status don't show configuration variables\n"
+				"  -s:               Only output status don't show configuration variables\n"
                 "\n",
                 progname);
         return 3;
@@ -87,7 +87,7 @@ int main(int argc, char **argv)
 	if (argc < 2)
 		return usage(progname);
 
-	while ((c = getopt(argc, argv, "t:i:o:cnh")) != -1) {		
+	while ((c = getopt(argc, argv, "t:i:o:csh")) != -1) {
 		switch (c) {
 			
 			case 't':
@@ -102,7 +102,7 @@ int main(int argc, char **argv)
 			case 'c':
 				withComments = true;
 				break;
-			case 'n':
+			case 's':
 				withConfiguration = false;
 				break;
 			case 'h':
