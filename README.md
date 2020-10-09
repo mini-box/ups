@@ -66,19 +66,26 @@ These devices allow advanced configuration which can be quite complex. It's reco
 
 - Show status and configuration:
 
-        $ sudo openups -t *device name*
+        $ sudo openups -t <device name>
 - Show only status
 
-        $ sudo openups -t *device name* -s
+        $ sudo openups -t <device name> -s
 - Export current configuration variables from device to file
 
-        $ sudo openups -t *device name* -o *filename*
+        $ sudo openups -t <device name> -o <file name>
 
-- Import configuration from file to device. **Warning: it will restart your UPS and in certain cases the device connected to it**
+- Import configuration from file to device. 
+**Warning: it will restart your UPS and in certain cases the device connected to it !**
 
-        $ sudo openups -t *device name* -i *filename*
+        $ sudo openups -t <device name> -i <file name>
 
 - For configuration variables you can add ```-c ``` switch on command line to output a detailed description for each variable. Example:
 ```6. UPS_INIT_DELAY_TOUT: 1 # [s] Initial delay before starting the UPS. Default is 1 sec.   ```
 
 # Network UPS Tools
+
+For remote management or shutdown configuration it's also possible to use [Network UPS Tools](https://networkupstools.org/). Open UPS and Open UPS 2 are already
+integrated in latest version so installation should be straight forward on different Linux flavors.
+For more details on custom installations and configuration for our UPS products on [Network UPS Tools](https://networkupstools.org/) see these links:
+- [Open UPS](https://github.com/mini-box/openups)
+- [Open UPS 2](https://github.com/mini-box/openups2)
