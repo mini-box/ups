@@ -1,13 +1,5 @@
-// HArray.h: interface for the HArray class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_HARRAY_H__AE52A320_3A09_4E75_8279_5BDD166D2C27__INCLUDED_)
-#define AFX_HARRAY_H__AE52A320_3A09_4E75_8279_5BDD166D2C27__INCLUDED_
-
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
+#ifndef __HARRAY_H__
+#define __HARRAY_H__
 
 #ifdef HIDAPI_EXPORTS
 class HIDAPI_API HArray  
@@ -46,4 +38,4 @@ private:
 	unsigned int   m_nLen;
 };
 
-#endif // !defined(AFX_HARRAY_H__AE52A320_3A09_4E75_8279_5BDD166D2C27__INCLUDED_)
+#endif

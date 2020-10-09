@@ -1,12 +1,9 @@
 /**
- * M4Atx 
  * Copyright (C) 2009 mini-box.com
  *
  * Licensed under the terms of the GNU Lesser General Public License v2.1:
  * 		http://www.opensource.org/licenses/lgpl-2.1.php
  *
- * For further information visit:
- * 		http://www.mini-box.com/M4-ATX
  *
  * File Authors:
  * 		Barna Csenteri

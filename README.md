@@ -1,7 +1,50 @@
 
 # Mini-Box.com UPS Status and Configuration Tool
 
-Tool for displaying the status and configuring the settings for all UPS products from Mini-Box.com. These include Open UPS, Open UPS2, NUC UPS and more.
+Mini-Box.com produces several high quality intelligent  Uninterruptible Power Supplies. This is a tool to report status information and configure these UPS models.
+
+## Supported models
+
+- **OpenUPS**: 6-30V Intelligent Uninterruptible Power Supply
+- **OpenUPS2**: 11-24V Intelligent DC-DC Uninterruptible Power Supply using LiFePO4 or 13-24V  using Li-Ion (see manual)
+- **NUC-UPS**: 6-38V Intelligent Automotive grade Uninterruptible Power Supply
+
+## Comparison table
+| Feature | [OpenUPS](https://www.mini-box.com/OpenUPS) | [OpenUPS2](https://www.mini-box.com/OpenUPS2) | [NUC-UPS](https://www.mini-box.com/NUC-UPS) |
+|---------|---------|----------|---------|
+| Picture | <img src="https://resources.mini-box.com/online/PWR-OpenUPS/moreimages/openUPS-by-Mini-Box-b2.jpg" width=150px> | <img src="https://resources.mini-box.com/online/PWR-OpenUPS2/moreimages/Mini-Box-openUPS2-b2.jpg" width=150px> | <img src="https://resources.mini-box.com/online/PWR-NUC-UPS/moreimages/Mini-Box-BATT-UPS-b3.png" width=150px> |
+|Input Voltage |	6-30V|	11-24V|	6-38 |
+|Output Voltage|	5-24V (programable)|	12V*	| 12V|
+|Architecture|	Buck/Boost|	Boost|	Buck/Boost|
+|Max Power|	6A|	5A|	5A|
+|Battery Chemistry|	Li-Ion, Li-Po, LIFEPO4, Lead Acid|	LiFePO4, Li-Ion**	| Li-Ion
+|Battery Charger|	Multiple chemistry charger|	3 state charger|	3 state charger|
+|Battery balancing|	Yes	|Yes|	Yes|
+|USB Interface|	    Yes| Yes|   Yes|
+|SMBUS|	Slave|	Slave|	-|
+|Coulomb counting (fuel gauge)|	Yes|	Yes|	Yes|
+|Temperature monitoring|	On board|	For each cell|	For each cell|
+|Battery design|	External removable|	Onboard removable|	Onboard removable|
+|Footprint|	Custom|	2.5" drive footprint|	2.5" drive footprint|
+|Windows compatible|	Yes|	Yes|	Yes|
+|Linux compatible|	Yes|	Yes	| Yes|
+|Motherboard ON/OFF pulse control|	Yes|	Yes|	Yes|
+Deep Sleep power consumption|	<50uA|	1uA	|5uA|
+|Availability|	Long life|	Long life|	New product|
+
+### Notes:
+    * If V(in) > V(out) then V(out) is unregulated (Vin=vout)
+    * If V(in) < V(out) then V(out) is 12V regulated
+    ** Li-Ion chemistry supported with hardware modification, consult manual.
+
+## Documentation
+
+These devices allow advanced configuration which can be quite complex. It's recommended to read the documentation using the links below before attempting to configure these UPSes.
+
+[OpenUPS ](https://resources.mini-box.com/online/PWR-OpenUPS/PWR-OpenUPS-hardware-manual.pdf)
+[OpenUPS2 ](http://wiki.mini-box.com/index.php?title=OpenUPS2)
+[NUC-UPS ](http://wiki.mini-box.com/index.php?title=NUC-UPS)
+
 
 ## Install from prebuilt binary
 
@@ -16,5 +59,26 @@ Tool for displaying the status and configuring the settings for all UPS products
     $ git clone && cd openups
     $ cmake .
     $ sudo make install
+
+
+## Using
+ For all commands below replace *device name* with the name of the device you want to control eg: *openups*, *openups2*, *nucups*
+
+- Show status and configuration:
+
+        $ sudo openups -t *device name*
+- Show only status
+
+        $ sudo openups -t *device name* -s
+- Export current configuration variables from device to file
+
+        $ sudo openups -t *device name* -o *filename*
+
+- Import configuration from file to device. **Warning: it will restart your UPS and in certain cases the device connected to it**
+
+        $ sudo openups -t *device name* -i *filename*
+
+- For configuration variables you can add ```-c ``` switch on command line to output a detailed description for each variable. Example:
+```6. UPS_INIT_DELAY_TOUT: 1 # [s] Initial delay before starting the UPS. Default is 1 sec.   ```
 
 # Network UPS Tools
