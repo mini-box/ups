@@ -1,3 +1,10 @@
+/*
+ *    Author: Nicu Pavel <npavel@mini-box.com>
+ *    Copyright (c) 2020 Mini-Box.com
+ *    Licensed under the terms of the GNU Lesser General Public License v2.1
+ *  	http://www.opensource.org/licenses/lgpl-2.1.php 
+ */
+
 #include <math.h>
 
 #include "HIDNUCUPS.h"

@@ -82,6 +82,13 @@ These devices allow advanced configuration which can be quite complex. It's reco
 - For configuration variables you can add ```-c ``` switch on command line to output a detailed description for each variable. Example:
 ```6. UPS_INIT_DELAY_TOUT: 1 # [s] Initial delay before starting the UPS. Default is 1 sec.   ```
 
+# Troubleshooting
+
+There might be issues with apparmor/SELinux that won't allow access to raw usb devices.
+For the snap binary this can be solved by:
+
+        $ sudo snap connect openups:raw-usb
+
 # Network UPS Tools
 
 For remote management or shutdown configuration it's also possible to use [Network UPS Tools](https://networkupstools.org/). Open UPS and Open UPS 2 are already
