@@ -211,10 +211,13 @@ void HIDOpenUPS::GetStatus()
 	parseMessage(recv);
 	usleep(1000);
 
+	//TODO This breaks further communication with device. Needs more investigation. 
+	/*
 	ret = sendMessage(OPENUPS_CLOCK_OUT, 0);
 	usleep(1000);
 	recvMessage(recv);
 	parseMessage(recv);
+	*/
 }
 
 void HIDOpenUPS::ReadConfigurationMemory() 

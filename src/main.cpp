@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	fprintf(stderr, "Device selected: %s\n", devicetype);
+	fprintf(stdout, "%s version %s. Device selected: %s\n", progname, VERSION, devicetype);
 	if (!devicetype) {
 		fprintf(stderr, "No device type selected !\n");
 		return usage(progname);
