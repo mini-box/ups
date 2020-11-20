@@ -1227,8 +1227,6 @@ void HIDNUCUPS::GetStatus()
 	ret = sendMessage(NUC_OUT_REPORT_IO_DATA5, 0);
 	recvMessage(recv);
 	parseMessage(recv);
-
-	printValues();
 }
 
 void HIDNUCUPS::ReadConfigurationMemory()

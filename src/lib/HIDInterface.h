@@ -54,6 +54,7 @@ class HIDInterface {
 		int sendCommand(unsigned char command, unsigned char value);
 		int sendCommandEx(unsigned char command, unsigned char value1, unsigned char value2);
 		int recvMessage(unsigned char *buffer);
+		int recvMessage(unsigned char *buffer, unsigned int len);
 		int GetMessageIdxByName(const char* name);
 		int varsToFile(const char *filename, bool withComments);
 		int fileToVars(const char *filename);

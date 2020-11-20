@@ -6,10 +6,12 @@
  */
 
 
+#include "devices.h"
 #include "version.h"
 #include "util.h"
 #include "usbhid.h"
 #include "HArray.h"
+#include "HIDDCDCUSB.h"
 #include "HIDOpenUPS.h"
 #include "HIDOpenUPS2.h"
 #include "HIDNUCUPS.h"
@@ -20,40 +22,6 @@
 #include <strings.h>
 #include <ctype.h>
 
-#define MINIBOX_VENDOR_ID	0x04d8
-
-#define OPENUPS_PRODUCT_ID	0xd004
-#define OPENUPS2_PRODUCT_ID	0xd005
-#define NUCUPS_PRODUCT_ID	0xd007
-
-struct deviceId {
-	const char *name;
-	const char *desc;
-	unsigned int vendorid;
-	unsigned int productid;
-};
-
-static const struct deviceId deviceIds[] = {
-	{
-		"openups",
-		"Open UPS",
-		MINIBOX_VENDOR_ID,
-		OPENUPS_PRODUCT_ID
-	},
-	{
-		"openups2",
-		"Open UPS2",
-		MINIBOX_VENDOR_ID,
-		OPENUPS2_PRODUCT_ID
-	},
-	{
-		"nucups",
-		"DC-DC NUC UPS",
-		MINIBOX_VENDOR_ID,
-		NUCUPS_PRODUCT_ID
-	},
-	{}
-};
 
 static const struct deviceId* findDeviceByName(const char *name) 
 {
@@ -71,13 +39,18 @@ int usage(char *progname)
 	fprintf(stderr,
                 "Usage: %s [<options>]\n"
                 "Options:\n"
-                "  -t <device type>: Select openups, openups2 or nucups as device type\n"
+                "  -t <device type>: Select device model (see below)\n"
 				"  -i <input file>:  Write settings from this file. Warning: Will reboot UPS!\n"
 				"  -o <output file>: Dump settings to this file\n"
 				"  -c:               Add comments for each configuration variable to output file\n"
-				"  -s:               Only output status don't show configuration variables\n"
+				"  -s:               Only output status don't read and show configuration variables\n"
                 "\n",
                 progname);
+
+	fprintf(stderr, "Known device models:\n");
+	for(int i = 0; deviceIds[i].name != NULL; i++) {
+		fprintf(stderr, "  %s \t- %s (vid: 0x%04x pid: 0x%04x)\n", deviceIds[i].name, deviceIds[i].desc, deviceIds[i].vendorid, deviceIds[i].productid);
+	}
         return 3;
 }
 
@@ -136,7 +109,7 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Selected device %s: %s\n", devid->name, devid->desc);
 	}
 
-	USBHID *d = new USBHID(devid->vendorid, devid->productid);
+	USBHID *d = new USBHID(devid->vendorid, devid->productid, devid->max_transfer_size);
 
 	d->open();
 	if (!d->isOpened())
@@ -147,7 +120,9 @@ int main(int argc, char **argv)
 
 	HIDInterface *ups;
 
-	if (devid->productid == OPENUPS_PRODUCT_ID) {
+	if (devid->productid == DCDCUSB_PRODUCT_ID) {
+		ups = new HIDDCDCUSB(d);
+	} else if (devid->productid == OPENUPS_PRODUCT_ID) {
 		ups = new HIDOpenUPS(d);
 	} else if (devid->productid == OPENUPS2_PRODUCT_ID) {
 		ups = new HIDOpenUPS2(d);
@@ -163,17 +138,18 @@ int main(int argc, char **argv)
 	usleep(1000);
 	
 	ups->GetStatus();
+	ups->printValues();	
 	
-	ups->ReadConfigurationMemory();
-	fprintf(stdout, "Read configuration\n");
-	if (withConfiguration)
+	if (withConfiguration) {
+		fprintf(stdout, "Read configuration\n");
+		ups->ReadConfigurationMemory();		
 		ups->printConfiguration(withComments);
-	
-	if (outfile) {
-		ups->varsToFile(outfile, withComments);
-		fprintf(stdout, "Saved configuration to file: %s\n", outfile);
+		if (outfile) {
+			ups->varsToFile(outfile, withComments);
+			fprintf(stdout, "Saved configuration to file: %s\n", outfile);
+		}
 	}
-	
+			
 	if (infile) {
 		ups->EraseConfigurationMemory();
 		fprintf(stdout, "Erased configuration\n");

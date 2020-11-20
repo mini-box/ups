@@ -70,7 +70,7 @@ int HIDInterface::sendMessageWithBuffer(unsigned char cType, unsigned int buflen
 	
 	memcpy(mesg.getBuf() + 1 + len, buffer, buflen);
 
-	int ret = d->writeInterrupt(mesg.getBuf(), mesg.length());
+	int ret = d->writeInterrupt(mesg.getBuf(), mesg.length(), true);
 	//fprintf(stderr, "[0x%02x] written %d/%d\n", cType, ret, len + 1);
 	return ret;
 }
@@ -78,6 +78,7 @@ int HIDInterface::sendMessageWithBuffer(unsigned char cType, unsigned int buflen
 int HIDInterface::sendMessage(unsigned char cType, unsigned int len, ...) 
 {
 	HArray mesg(len + 1);
+	//HArray mesg(24);
 	mesg.getBuf()[0] = cType;
 
 	va_list args;
@@ -94,7 +95,7 @@ int HIDInterface::sendMessage(unsigned char cType, unsigned int len, ...)
 	}
 	va_end(args);
 
-	int ret = d->writeInterrupt(mesg.getBuf(), mesg.length());
+	int ret = d->writeInterrupt(mesg.getBuf(), mesg.length(), true);
 	//fprintf(stderr, "[0x%02x] written %d/%d\n", cType, ret, len + 1);
 	return ret;
 }
@@ -110,22 +111,20 @@ int HIDInterface::sendCommandEx(unsigned char command, unsigned char value1, uns
 
 int HIDInterface::recvMessage(unsigned char *buffer)
 {
-	int ret = d->readInterrupt(buffer, 32);
-
-	/*
-	fprintf(stderr, "Read ret: %d\n", ret);
-	
-    if (ret > 0)
-    {
-        for (int j = 0; j < ret; j++)
-        {
-            fprintf(stderr, " 0x%02x ", buffer[j]);
-        }
-        fprintf(stderr, "\n");
-    } 
-	*/
+	int ret = d->readInterrupt(buffer);	
+		    	
 	if (ret <= 0 ) {
-		fprintf(stderr, "Read error: %d\n", ret);
+		fprintf(stderr, "Read error [0x%02x]: %d\n", buffer[0], ret);
+	}
+	return ret;
+}
+
+int HIDInterface::recvMessage(unsigned char *buffer, unsigned int len)
+{
+	int ret = d->readInterrupt(buffer, len);	
+		    	
+	if (ret <= 0 ) {
+		fprintf(stderr, "Read error [0x%02x]: %d/%d\n", buffer[0], ret, len);
 	}
 	return ret;
 }

@@ -7,6 +7,7 @@ src/lib/usbhid.cpp
 src/lib/HIDOpenUPS.cpp
 src/lib/HIDOpenUPS2.cpp
 src/lib/HIDNUCUPS.cpp
+src/lib/HIDDCDCUSB.cpp
 src/lib/HIDInterface.cpp
 src/utils/util.cpp
 src/utils/HArray.cpp 
@@ -30,3 +31,8 @@ install(
   TARGETS openups
   DESTINATION bin
   )
+
+# Snap Build
+# snapcraft clean
+# snapcraft
+# snapcraft upload --release=beta openups_0.4_amd64.snap

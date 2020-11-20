@@ -941,8 +941,6 @@ void HIDOpenUPS2::GetStatus()
 	ret = sendMessage(OPENUPS2_CLOCK_OUT, 0);
 	recvMessage(recv);
 	parseMessage(recv);
-
-	printValues();
 }
 
 void HIDOpenUPS2::ReadConfigurationMemory() 

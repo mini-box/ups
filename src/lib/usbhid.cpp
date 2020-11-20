@@ -8,14 +8,18 @@
 #include "usbhid.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-USBHID::USBHID(unsigned int vendorid, unsigned int productid)
+#undef DEBUG_RECV
+
+USBHID::USBHID(unsigned int vendorid, unsigned int productid, unsigned int max_transfer_size)
 {
     this->vendorid = vendorid;
     this->productid = productid;
     this->device = NULL;
     this->handle = NULL;
     this->connected = false;
+    this->max_transfer_size = max_transfer_size;
 
     usb_init();
     usb_set_debug(0);
@@ -56,8 +60,7 @@ struct usb_dev_handle *USBHID::open(void)
 
     ret = usb_set_altinterface(this->handle, 0);
 
-    fprintf(stderr, "Found and initialized hid device:\n");    
-    fprintf(stderr, "Product: %s, Manufacturer: %s, Firmware Version: %s\n", this->getProduct(), this->getManufacturer(), this->getSerial());
+    fprintf(stdout, "Product: %s, Manufacturer: %s, Firmware Version: %s\n", this->getProduct(), this->getManufacturer(), this->getSerial());
 
     connected = true;
     return this->handle;
@@ -157,28 +160,59 @@ int USBHID::readInterrupt(unsigned char *buff, int size)
 
     int ret = usb_interrupt_read((usb_dev_handle *)this->handle, USB_ENDPOINT_IN + 1,
                                  reinterpret_cast<char *>(buff), size, 
-                                 100);
-
+                                 USBHID_RECV_TIMEOUT);
+    
+#ifdef DEBUG_RECV
+    for (int j = 0; j < size; j++) {
+		fprintf(stderr, " 0x%02x ", buff[j]);
+	}
+	fprintf(stderr, "\n");
+#endif
     if (ret < 0)
         fprintf(stderr, "hid_interrupt_read failed with return code %d\n", ret);
 
     return ret;
 }
 
-int USBHID::writeInterrupt(unsigned char *buff, int size)
+int USBHID::readInterrupt(unsigned char *buff) {
+    return readInterrupt(buff, max_transfer_size);
+}
+
+int USBHID::writeInterrupt(unsigned char *buff, int size, bool use_transfer_size)
 {
-    if (buff == NULL)
-    {
+    if (buff == NULL) {
         fprintf(stderr, "Invalid write buffer, skipping write\n");
         return -1;
     }
 
+    unsigned char *packet;
+    if (use_transfer_size) {
+        if ((packet = (unsigned char*) malloc(max_transfer_size)) == NULL) {
+        return -2;
+        }
+
+        if (size > max_transfer_size) {
+            fprintf(stderr, "Warning: Multi-packet write not implemented !");
+            size = max_transfer_size;
+        } 
+        memset(packet, 0x00, max_transfer_size);
+        memcpy(packet, buff, size);
+        size = max_transfer_size;
+    } else {
+        packet = buff;
+    }
+    
+
     int ret = usb_interrupt_write((usb_dev_handle *)this->handle, USB_ENDPOINT_OUT + 1,
-                              reinterpret_cast<char *>(buff), size, 
-                              100);
+                              reinterpret_cast<char *>(packet), size, 
+                              USBHID_SEND_TIMEOUT);
 
     if (ret < 0)
         fprintf(stderr, "hid_interrupt_write failed with return code %d\n", ret);
+    
+    if (use_transfer_size) {
+        free(packet);
+    }
 
     return ret;
 }
@@ -191,7 +225,7 @@ int USBHID::release()
 {
     int ret = -1;
     ret = usb_release_interface(this->handle, 0);
-    if (!ret)
+    if (ret < 0)
         printf("failed to release interface: %d\n", ret);
 
     return ret;

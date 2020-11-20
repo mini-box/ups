@@ -215,8 +215,6 @@ void HIDOpenUPS::GetStatus()
 	usleep(1000);
 	recvMessage(recv);
 	parseMessage(recv);
-	
-	printValues();
 }
 
 void HIDOpenUPS::ReadConfigurationMemory() 
