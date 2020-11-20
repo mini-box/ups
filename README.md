@@ -8,6 +8,11 @@ Mini-Box.com produces several high quality intelligent  Uninterruptible Power Su
 - **OpenUPS**: 6-30V Intelligent Uninterruptible Power Supply
 - **OpenUPS2**: 11-24V Intelligent DC-DC Uninterruptible Power Supply using LiFePO4 or 13-24V  using Li-Ion (see manual)
 - **NUC-UPS**: 6-38V Intelligent Automotive grade Uninterruptible Power Supply
+- **DCDC-USB**: Intelligent buck-boost DC-DC converter with USB interface
+- **DCDC-USB-200**: Intelligent buck-boost DC-DC converter with USB interface
+
+## Warning
+The flash storage on these devices have limited write cycles (should be considered < _100.000_) so it's *not* advisable to keep writing the configuration periodically on a timer.
 
 ## Comparison table
 | Feature | [OpenUPS](https://www.mini-box.com/OpenUPS) | [OpenUPS2](https://www.mini-box.com/OpenUPS2) | [NUC-UPS](https://www.mini-box.com/NUC-UPS) |
