@@ -35,8 +35,8 @@ ATXMSG g_DCDCUSB_memMessages[DCDCUSB_MAX_MESSAGE_CNT] =
 		{1, 1, _T("IGNITION_LOW_LIMIT"), true, 2, 0.1558, 0, 0, _T("Below this voltage IGN is considered OFF"), _T("[V]")},
 		{2, 1, _T("IGNITION_DEBOUNCE"), false, 1, 10, 0, 0, _T("Ignition filter de-bouncing"), _T("[ms]")},
 
-		{30, 1, _T("AUTOMOTIVE_MODE_IGNITION_CANCEL_TIME"), true, 1, 1, 0, 0, _T("After DCDC-USB \"boots\" in AUTOMOTIVE mode IGN is cancelled for this time"), _T("[sec]")},
-		{14, 1, _T("AUTOMOTIVE_MODE_THUMP_TIMEOUT"), true, 1, 1, 0, 0, _T("THUMP timeout, switching off the audio amplifier during motherboard startup/shutdown"), _T("[sec]")},
+		{30, 1, _T("AUTOMOTIVE_IGNITION_CANCEL_TIME"), true, 1, 1, 0, 0, _T("After DCDC-USB \"boots\" in AUTOMOTIVE mode IGN is cancelled for this time"), _T("[sec]")},
+		{14, 1, _T("AUTOMOTIVE_THUMP_TIMEOUT"), true, 1, 1, 0, 0, _T("THUMP timeout, switching off the audio amplifier during motherboard startup/shutdown"), _T("[sec]")},
 
 		{3, 1, _T("DELAY_BEFORE_PSU_STARTUP"), true, 1, 1, 0, 0, _T("Initial startup delay to avoid re-cranking problems"), _T("[s]")},
 		{4, 1, _T("MIN_VIN_VOLTAGE_AT_STARTUP"), true, 2, 0.1558, 0, 0, _T("Input voltage STARTUP ZONE treshold "), _T("[V]")},
@@ -127,17 +127,6 @@ unsigned char HIDDCDCUSB::GetData(double vout)
 		result = 255;
 
 	return (unsigned char)result;
-
-	/*	for (unsigned char d=0;d<256;d++)
-	{
-		double vtest = GetVOut(d);
-		TRACE("     td=%02x vt=%f\n",d, vtest);
-		if (vout >= vtest)
-		{
-			return d;
-		}
-	}
-	return 0;*/
 }
 
 HIDDCDCUSB::HIDDCDCUSB(USBHID *d) : HIDInterface(d)
@@ -555,6 +544,8 @@ bool HIDDCDCUSB::readOneValue(char *str, int nReadMode, double dMultiplier, int 
 		}
 	}
 
+	//fprintf(stderr, "readOneValue: readMode: %d c1: 0x%02x c2: 0x%02x\n", nReadMode, c1, c2);
+
 	return ok;
 }
 
@@ -649,7 +640,7 @@ void HIDDCDCUSB::convertOneValue2String(char *destination, int nLen, int nIndex,
 
 bool HIDDCDCUSB::setVariableData(int mesg_no, char *str)
 {
-	int len = HIDDCDCUSB::GetMessages()[mesg_no].nLen;
+	int len = GetMessages()[mesg_no].nLen;
 
 	if (len != 0)
 	{
@@ -658,22 +649,22 @@ bool HIDDCDCUSB::setVariableData(int mesg_no, char *str)
 		unsigned char c3 = 0;
 		unsigned char c4 = 0;
 
-		if (readOneValue(str, HIDDCDCUSB::GetMessages()[mesg_no].nReadMode, HIDDCDCUSB::GetMessages()[mesg_no].dMultiplier, len, c1, c2, c3, c4))
+		if (readOneValue(str, GetMessages()[mesg_no].nReadMode, GetMessages()[mesg_no].dMultiplier, len, c1, c2, c3, c4))
 		{
 			switch (len)
 			{
 			case 1:
-				m_chPackages[HIDDCDCUSB::GetMessages()[mesg_no].nIndex] = c2;
+				m_chPackages[GetMessages()[mesg_no].nIndex] = c2;
 				break;
 			case 2:
-				m_chPackages[HIDDCDCUSB::GetMessages()[mesg_no].nIndex] = c1;
-				m_chPackages[HIDDCDCUSB::GetMessages()[mesg_no].nIndex + 1] = c2;
+				m_chPackages[GetMessages()[mesg_no].nIndex] = c1;
+				m_chPackages[GetMessages()[mesg_no].nIndex + 1] = c2;
 				break;
 			case 4:
-				m_chPackages[HIDDCDCUSB::GetMessages()[mesg_no].nIndex] = c1;
-				m_chPackages[HIDDCDCUSB::GetMessages()[mesg_no].nIndex + 1] = c2;
-				m_chPackages[HIDDCDCUSB::GetMessages()[mesg_no].nIndex + 2] = c3;
-				m_chPackages[HIDDCDCUSB::GetMessages()[mesg_no].nIndex + 3] = c4;
+				m_chPackages[GetMessages()[mesg_no].nIndex] = c1;
+				m_chPackages[GetMessages()[mesg_no].nIndex + 1] = c2;
+				m_chPackages[GetMessages()[mesg_no].nIndex + 2] = c3;
+				m_chPackages[GetMessages()[mesg_no].nIndex + 3] = c4;
 				break;
 			}
 			return 1;
@@ -793,7 +784,7 @@ void HIDDCDCUSB::WriteConfigurationMemory()
 		sendMessageWithBuffer(DCDCUSB_MEM_WRITE_OUT, 16, m_chPackages + (m_ulSettingsAddr - DCDCUSB_SETTINGS_ADDR_START), 4, m_ulSettingsAddr & 0xFF, (m_ulSettingsAddr >> 8) & 0xFF, 0x00, 0x10);
 		ret = recvMessage(recv);
 
-		if (ret <= 0 || recv[0] != DCDCUSB_MEM_WRITE_IN)
+		if (ret <= 0)
 		{
 			fprintf(stderr, "Error (%d, 0x%02x) writing configuration variables , aborting ...\n", ret, recv[0]);
 			break;

@@ -46,9 +46,11 @@ Deep Sleep power consumption|	<50uA|	1uA	|5uA|
 
 These devices allow advanced configuration which can be quite complex. It's recommended to read the documentation using the links below before attempting to configure these UPSes.
 
-[OpenUPS ](https://resources.mini-box.com/online/PWR-OpenUPS/PWR-OpenUPS-hardware-manual.pdf)
-[OpenUPS2 ](http://wiki.mini-box.com/index.php?title=OpenUPS2)
-[NUC-UPS ](http://wiki.mini-box.com/index.php?title=NUC-UPS)
+- [OpenUPS ](https://resources.mini-box.com/online/PWR-OpenUPS/PWR-OpenUPS-hardware-manual.pdf)
+- [OpenUPS2 ](http://wiki.mini-box.com/index.php?title=OpenUPS2)
+- [NUC-UPS ](http://wiki.mini-box.com/index.php?title=NUC-UPS)
+- [DCDC-USB] (https://resources.mini-box.com/online/PWR-DCDC-USB/PWR-DCDC-USB-Advanced-USB-configuration-manual.pdf)
+- [DCDC-USB-200](https://resources.mini-box.com/online/PWR-DCDC-USB-200/PWR-DCDC-USB-200-Advanced-USB-configuration-manual.pdf)
 
 
 ## Install from prebuilt binary

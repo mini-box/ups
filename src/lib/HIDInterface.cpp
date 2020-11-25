@@ -134,11 +134,11 @@ int HIDInterface::GetMessageIdxByName(const char* name)
 	if (!name)
 		return -1;
 
-	for (int i=0;i < MAX_MESSAGE_CNT;i++)
+	for (int i = 0;i < MAX_MESSAGE_CNT; i++)
 	{
 		ATXMSG msg = GetMessages()[i];
-		// fprintf(stderr, "GetMessage %d: %s\n", i, msg.strName);
-		if (msg.nLen!=0)
+		//fprintf(stderr, "GetMessage %d: %s nLen: %d cmp: %d\n", i, msg.strName, msg.nLen, strcasecmp(msg.strName, name));
+		if (msg.nLen != 0)
 			if (strcasecmp(msg.strName, name) == 0) 
 				return i;
 	}
@@ -230,15 +230,17 @@ int HIDInterface::fileToVars(const char *filename) {
 			continue;
         }
 		if (sscanf(line, "%32[^=]=%32[^\n]%*c", name, val) == 2){
-			fprintf(stdout, "Found var: %s value: %s\n", name, val);
+			//fprintf(stdout, "Found var: %s value: %s\n", name, val);
 			int idx;
 			idx = GetMessageIdxByName(name);
-			if (idx > 0) {
+			if (idx >= 0) {
 				if (setVariableData(idx, val)) {
-					fprintf(stdout, "Succesfully set %s to %s\n", name, val);
+					//fprintf(stdout, "Succesfully converted %s to %s\n", name, val);
 				} else {
-					fprintf(stderr, "Error setting %s to %s\n", name, val);
+					fprintf(stderr, "Error converting %s to %s\n", name, val);
 				}				
+			} else {
+				fprintf(stderr, "Variable '%s' unknown\n", name);
 			}
 			vars++;
 		} 
