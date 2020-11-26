@@ -1275,7 +1275,7 @@ void HIDNUCUPS::WriteConfigurationMemory()
 	m_ulSettingsAddr = NUC_SETTINGS_ADDR_START;
 	while (m_ulSettingsAddr < NUC_SETTINGS_ADDR_END)
 	{
-		sendMessageWithBuffer(NUC_MEM_WRITE_OUT, 16, m_chPackages+(m_ulSettingsAddr-SETTINGS_ADDR_START), 4, m_ulSettingsAddr & 0xFF, (m_ulSettingsAddr >> 8) & 0xFF, 0x00, 0x10);
+		sendMessageWithBuffer(NUC_MEM_WRITE_OUT, 16, m_chPackages+(m_ulSettingsAddr-NUC_SETTINGS_ADDR_START), 4, m_ulSettingsAddr & 0xFF, (m_ulSettingsAddr >> 8) & 0xFF, 0x00, 0x10);
 		ret = recvMessage(recv);
 		
 		if (ret <= 0 || recv[0] != NUC_MEM_WRITE_IN) {

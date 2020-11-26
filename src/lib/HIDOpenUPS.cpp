@@ -154,7 +154,7 @@ unsigned int g_OpenUPS_memTerm[]={	 (unsigned int)0x31,(unsigned int)0x40,(unsig
 
 HIDOpenUPS::HIDOpenUPS(USBHID *d): HIDInterface(d)
 {
-	m_ulSettingsAddr = SETTINGS_ADDR_START;	
+	m_ulSettingsAddr = OPENUPS_SETTINGS_ADDR_START;	
 }
 
 HIDOpenUPS::~HIDOpenUPS()
@@ -224,10 +224,10 @@ void HIDOpenUPS::ReadConfigurationMemory()
 {
 	unsigned char recv[32];
 
-	m_ulSettingsAddr = SETTINGS_ADDR_START;
+	m_ulSettingsAddr = OPENUPS_SETTINGS_ADDR_START;
 	memset(m_chPackages, 0, SETTINGS_PACKS * 16);
 
-	while (m_ulSettingsAddr < SETTINGS_ADDR_END)
+	while (m_ulSettingsAddr < OPENUPS_SETTINGS_ADDR_END)
 	{
 		sendMessage(OPENUPS_MEM_READ_OUT, 4, m_ulSettingsAddr & 0xFF, (m_ulSettingsAddr >> 8) & 0xFF, 0x00, 0x10);
 		recvMessage(recv);
@@ -241,7 +241,7 @@ void HIDOpenUPS::EraseConfigurationMemory()
 	unsigned char recv[32];
 	int ret;
 
-	m_ulSettingsAddr = SETTINGS_ADDR_START;
+	m_ulSettingsAddr = OPENUPS_SETTINGS_ADDR_START;
 	sendMessage(OPENUPS_MEM_ERASE, 4, m_ulSettingsAddr & 0xFF, (m_ulSettingsAddr >> 8) & 0xFF, 0x00, 0x40);
 
 	int retries = 5;
@@ -263,10 +263,10 @@ void HIDOpenUPS::WriteConfigurationMemory()
 	unsigned char recv[32];
 	int ret;
 
-	m_ulSettingsAddr = SETTINGS_ADDR_START;
-	while (m_ulSettingsAddr < SETTINGS_ADDR_END)
+	m_ulSettingsAddr = OPENUPS_SETTINGS_ADDR_START;
+	while (m_ulSettingsAddr < OPENUPS_SETTINGS_ADDR_END)
 	{
-		sendMessageWithBuffer(OPENUPS_MEM_WRITE_OUT, 16, m_chPackages+(m_ulSettingsAddr-SETTINGS_ADDR_START), 4, m_ulSettingsAddr & 0xFF, (m_ulSettingsAddr >> 8) & 0xFF, 0x00, 0x10);
+		sendMessageWithBuffer(OPENUPS_MEM_WRITE_OUT, 16, m_chPackages+(m_ulSettingsAddr-OPENUPS_SETTINGS_ADDR_START), 4, m_ulSettingsAddr & 0xFF, (m_ulSettingsAddr >> 8) & 0xFF, 0x00, 0x10);
 		ret = recvMessage(recv);
 		
 		if (ret <= 0 || recv[0] != OPENUPS_MEM_WRITE_IN) {
@@ -365,7 +365,7 @@ void HIDOpenUPS::parseMessage(unsigned char *msg)
 
 		case OPENUPS_MEM_READ_IN:
 			{
-				memcpy(m_chPackages + (m_ulSettingsAddr - SETTINGS_ADDR_START), msg + 5, 16);
+				memcpy(m_chPackages + (m_ulSettingsAddr - OPENUPS_SETTINGS_ADDR_START), msg + 5, 16);
 				/*
 				fprintf(stderr, "%02lx %02lx", m_ulSettingsAddr & 0xFF, (m_ulSettingsAddr >> 8) & 0xFF);
 				for (int len = 0; len < 16; len++)

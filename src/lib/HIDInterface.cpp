@@ -250,3 +250,32 @@ int HIDInterface::fileToVars(const char *filename) {
 
 	return 0;
 }
+
+struct EXEC* HIDInterface::parseCommand(char *cmdexpr) {
+	if (!cmdexpr) 
+		return NULL;
+
+	struct EXEC *exec = (struct EXEC *) malloc (sizeof (struct EXEC));
+	unsigned int idx = 0;
+	char *token;
+
+	while ((token = strsep(&cmdexpr, CMD_DELIM))) {
+		if (idx == 0) {
+			strncpy(exec->cmd, token, MAX_CMD_LEN);
+			exec->cmd[MAX_CMD_LEN] = '\0';
+			fprintf(stdout, "Found command: %s\n", exec->cmd);
+		} else {
+			strncpy(exec->params[idx - 1], token, MAX_PARAM_LEN);
+			exec->params[idx - 1][MAX_PARAM_LEN] = '\0';
+			fprintf(stdout, "Found param %d: %s\n", idx, exec->params[idx - 1]);
+		}
+		idx++;
+	}
+	exec->params_count = idx;
+	return exec;
+}
+
+bool HIDInterface::executeCommand(char *cmdexpr) {
+	fprintf(stderr, "Commands not implemented !\n");	
+	return false;
+}

@@ -71,6 +71,10 @@ These devices allow advanced configuration which can be quite complex. It's reco
 ## Using
  For all commands below replace *device name* with the name of the device you want to control eg: *openups*, *openups2*, *nucups*
 
+ - Show help, supported devices and supported commands per device:
+
+        $ openups -h
+
 - Show status and configuration:
 
         $ sudo openups -t <device name>
@@ -88,6 +92,11 @@ These devices allow advanced configuration which can be quite complex. It's reco
 
 - For configuration variables you can add ```-c ``` switch on command line to output a detailed description for each variable. Example:
 ```6. UPS_INIT_DELAY_TOUT: 1 # [s] Initial delay before starting the UPS. Default is 1 sec.   ```
+
+- Some devices accept commands to set for example the output voltage:
+
+        $ sudo openups -t dcdcusb -e set_vout:11.5 -s
+
 
 # Troubleshooting
 

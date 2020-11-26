@@ -34,22 +34,42 @@ static const struct deviceId* findDeviceByName(const char *name)
 	return NULL;
 }
 
+static int printDeviceCommands(const struct deviceCmd *cmds) 
+{
+	int i;
+
+	if (!cmds) {
+		return 0;
+	}
+	fprintf(stderr, "\n");
+	for (i = 0; cmds[i].cmd != NULL; i++) {
+		fprintf(stderr, "\t%s - %s\n", cmds[i].cmd, cmds[i].desc);
+	}
+
+	return i;	
+}
+
 int usage(char *progname)
 {
 	fprintf(stderr,
                 "Usage: %s [<options>]\n"
                 "Options:\n"
-                "  -t <device type>: Select device model (see below)\n"
-				"  -i <input file>:  Write settings from this file. Warning: Will reboot UPS!\n"
-				"  -o <output file>: Dump settings to this file\n"
-				"  -c:               Add comments for each configuration variable to output file\n"
-				"  -s:               Only output status don't read and show configuration variables\n"
+                "  -t <device type>:    Select device model (see below)\n"
+				"  -i <input file>:     Write settings from this file. Warning: Will reboot UPS!\n"
+				"  -o <output file>:    Dump settings to this file\n"
+				"  -c:                  Add comments for each configuration variable to output file\n"
+				"  -s:                  Only output status don't read and show configuration variables\n"
+				"  -e <cmd:param1:...>: Execute command.\n"
                 "\n",
                 progname);
 
 	fprintf(stderr, "Known device models:\n");
 	for(int i = 0; deviceIds[i].name != NULL; i++) {
 		fprintf(stderr, "  %s \t- %s (vid: 0x%04x pid: 0x%04x)\n", deviceIds[i].name, deviceIds[i].desc, deviceIds[i].vendorid, deviceIds[i].productid);
+		fprintf(stderr, "    Available Commands: ");
+		if (printDeviceCommands(deviceIds[i].cmds) == 0) {
+			fprintf(stderr, " None\n");
+		};
 	}
         return 3;
 }
@@ -64,11 +84,12 @@ int main(int argc, char **argv)
 	char *outfile = NULL;
 	bool withComments = false;
 	bool withConfiguration = true;
+	char *execCmd = NULL;
 
 	if (argc < 2)
 		return usage(progname);
 
-	while ((c = getopt(argc, argv, "t:i:o:csh")) != -1) {
+	while ((c = getopt(argc, argv, "t:i:o:e:csh")) != -1) {
 		switch (c) {
 			
 			case 't':
@@ -85,6 +106,9 @@ int main(int argc, char **argv)
 				break;
 			case 's':
 				withConfiguration = false;
+				break;
+			case 'e':
+				execCmd = optarg;
 				break;
 			case 'h':
 				usage(progname);
@@ -139,6 +163,14 @@ int main(int argc, char **argv)
 	
 	ups->GetStatus();
 	ups->printValues();	
+
+	if (execCmd) {
+		if (ups->executeCommand(execCmd)) {
+			fprintf(stdout, "Command executed.\n");
+			ups->GetStatus();
+			ups->printValues();
+		}
+	}
 	
 	if (withConfiguration) {
 		fprintf(stdout, "Read configuration\n");

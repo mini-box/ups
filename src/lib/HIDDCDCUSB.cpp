@@ -99,23 +99,18 @@ ATXMSG g_DCDCUSB_memMessages[DCDCUSB_MAX_MESSAGE_CNT] =
 
 double HIDDCDCUSB::GetVOut(unsigned char data)
 {
-	//	double rpot = ((double)data) * CT_RP / (double)257 + CT_RW;
-	//	return (double)0.8 * ( (double)1 + CT_R1/(rpot+CT_R2));
-
 	double rpot = ((double)data) * DCDCUSB_CT_RP / (double)257 + DCDCUSB_CT_RW;
 	double voltage = (double)80 * ((double)1 + DCDCUSB_CT_R1 / (rpot + DCDCUSB_CT_R2));
 	voltage = floor(voltage);
 	return voltage / 100;
 }
 
-unsigned char HIDDCDCUSB::GetData(double vout)
+unsigned char HIDDCDCUSB::ConvertVoltageToChar(double vout)
 {
-	//	double rpot = (double)0.8 * CT_R1 / (vout - (double)0.8) - CT_R2;
-	//	return (unsigned char)(257 * (rpot-CT_RW) / CT_RP);
-
 	if (vout < 5)
 		vout = 5;
-	else if (vout > 25)
+	
+	if (vout > 25)
 		vout = 25;
 
 	double rpot = (double)0.8 * DCDCUSB_CT_R1 / (vout - (double)0.8) - DCDCUSB_CT_R2;
@@ -432,7 +427,7 @@ bool HIDDCDCUSB::readOneValue(char *str, int nReadMode, double dMultiplier, int 
 		else
 		{
 			c1 = 0;
-			c2 = HIDDCDCUSB::GetData(val);
+			c2 = ConvertVoltageToChar(val);
 			ok = true;
 		}
 	}
@@ -709,8 +704,26 @@ void HIDDCDCUSB::restartUPSInBootloaderMode()
 {
 }
 
+void HIDDCDCUSB::setVOutVolatile(char *param) {
+
+	if (!param) 
+		return;
+
+	double voltage;
+	char *end, temps[10];
+	unsigned char val;
+	
+	voltage = strtod(param, &end);
+	fprintf(stderr, "Setting VOut voltage to: %lf\n", voltage);
+	val = ConvertVoltageToChar(voltage);
+
+	sendMessage(DCDCUSB_CMD_OUT, 3, DCDCUSB_CMD_WRITE_VOUT, val, 0);    
+}
+
 void HIDDCDCUSB::setVOutVolatile(float vout)
 {
+	unsigned char val = ConvertVoltageToChar(vout);
+	sendMessage(DCDCUSB_CMD_OUT, 3, DCDCUSB_CMD_WRITE_VOUT, val, 0); 
 }
 
 void HIDDCDCUSB::incDecVOutVolatile(unsigned char inc)
@@ -795,4 +808,20 @@ void HIDDCDCUSB::WriteConfigurationMemory()
 		}
 		m_ulSettingsAddr += 16;
 	}
+}
+
+bool HIDDCDCUSB::executeCommand(char *cmdexpr) {
+	fprintf(stdout, "Executing command and params: %s\n", cmdexpr);
+	struct EXEC *exec = parseCommand(cmdexpr);
+	bool executed = false;
+
+	if ((strcmp(exec->cmd, "set_vout") == 0) && (exec->params_count > 0)) {
+		setVOutVolatile(exec->params[0]);		
+		executed = true;
+	} else {
+		fprintf(stderr, "Unknown command: %s\n", exec->cmd);
+	}
+
+	free(exec);
+	return executed;
 }

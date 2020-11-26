@@ -89,6 +89,7 @@ public:
 	void parseMessage(unsigned char *msg);
 	void printValues();
 	void printConfiguration();
+	bool executeCommand(char *cmdexpr);
 
 	bool readOneValue(char *str, int nReadMode, double dMultiplier, int len, unsigned char &c1, unsigned char &c2, unsigned char &c3, unsigned char &c4);
 	float convertOneValue2Float(unsigned char *buffer, int nLen, int nIndex, int nReadMode, double dMultiplier);
@@ -101,16 +102,13 @@ public:
 	unsigned char getUPSVariableData(unsigned int cnt, char *name, char *value, char *unit, char *comment);
 	void restartUPS();
 	void restartUPSInBootloaderMode();
-	void setVOutVolatile(float vout);
-	void incDecVOutVolatile(unsigned char inc);
-
+	
 	void GetStatus();
 	void ReadConfigurationMemory();
 	void EraseConfigurationMemory();
 	void WriteConfigurationMemory();
 
-	double GetVOut(unsigned char data);
-	unsigned char GetData(double vout);
+
 
 private:
 	int m_nVoltageCfg;
@@ -144,6 +142,13 @@ private:
 	char m_strTimerOffDelay[256];
 	char m_strTimerHardOff[256];
 	char m_editRegulatorSteps[256];
+
+	double GetVOut(unsigned char data);
+	unsigned char ConvertVoltageToChar(double vout);
+	void setVOutVolatile(char *param);
+	void setVOutVolatile(float vout);
+	void incDecVOutVolatile(unsigned char inc);
+	
 };
 
 #endif
