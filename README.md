@@ -49,7 +49,7 @@ These devices allow advanced configuration which can be quite complex. It's reco
 - [OpenUPS ](https://resources.mini-box.com/online/PWR-OpenUPS/PWR-OpenUPS-hardware-manual.pdf)
 - [OpenUPS2 ](http://wiki.mini-box.com/index.php?title=OpenUPS2)
 - [NUC-UPS ](http://wiki.mini-box.com/index.php?title=NUC-UPS)
-- [DCDC-USB] (https://resources.mini-box.com/online/PWR-DCDC-USB/PWR-DCDC-USB-Advanced-USB-configuration-manual.pdf)
+- [DCDC-USB](https://resources.mini-box.com/online/PWR-DCDC-USB/PWR-DCDC-USB-Advanced-USB-configuration-manual.pdf)
 - [DCDC-USB-200](https://resources.mini-box.com/online/PWR-DCDC-USB-200/PWR-DCDC-USB-200-Advanced-USB-configuration-manual.pdf)
 
 
