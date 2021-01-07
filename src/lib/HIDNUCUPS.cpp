@@ -1224,9 +1224,16 @@ void HIDNUCUPS::GetStatus()
 	recvMessage(recv);
 	parseMessage(recv);
 
+/* 
+	IO_DATA5 messages result in incomplete reads leading to timeouts on usb 
+ 	TODO: Investigate protocol for IO_DATA5  
+*/
+
+/* 
 	ret = sendMessage(NUC_OUT_REPORT_IO_DATA5, 0);
 	recvMessage(recv);
 	parseMessage(recv);
+*/
 }
 
 void HIDNUCUPS::ReadConfigurationMemory()
