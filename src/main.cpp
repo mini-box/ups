@@ -21,6 +21,7 @@
 #include <math.h>
 #include <strings.h>
 #include <ctype.h>
+#include <libgen.h>
 
 
 static const struct deviceId* findDeviceByName(const char *name) 
