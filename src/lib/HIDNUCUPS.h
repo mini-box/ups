@@ -138,6 +138,82 @@ private:
 		unsigned char m_chMode;
 
 		unsigned int m_nCPUUsage;
+		
+		const char *SM_UPS[16] = { "INIT",
+					   "LPWR",
+					   "OFF",
+					   "WAIT_IGNITION_ON_TO_OUTPUT_ON",
+					   "OUTPUT_ON",
+					   "WAIT_OUTPUT_ON_TO_MOBPULSE_ON",
+					   "MOBPULSE_ON",
+					   "ON",
+					   "WAIT_IGNITION_OFF_TO_MOBPULSE_OFF",
+					   "WAIT_HARDOF",
+					   "OUTPUT_OFF",
+					   "BUCKBOOST_ON",
+					   "MOBPULSE_OFF",
+					   "ENTER_LOWPOWER",
+					   "UNKNOWN",
+					   "UNKNOWN"};
+	
+
+		const char *SM_AFE[8] = {  "IDLE",
+					   "INIT",
+					   "GAINSREAD",
+					   "UPDATE",
+					   "NORMAL",
+					   "SHIP01",
+					   "SHIP10",
+					   "SHIPMODE"};
+	
+
+
+		const char *SM_CHG[16] = { "IDLE",
+					   "INIT",
+					   "CONDITION",
+					   "START",
+					   "PRECHARGE_CC",
+					   "WAIT_BULK_CC",
+					   "BULK_CC",
+					   "BULK_CV",
+					   "BULK_END",
+					   "FLOAT",
+					   "UNKNOWN",
+					   "UNKNOWN",
+					   "UNKNOWN",
+					   "UNKNOWN",
+					   "UNKNOWN",
+					   "END"};
+	
+	
+		const char *SM_DTCT[16] = {"IDLE",
+					   "STOP_BALANCE",
+					   "START",
+					   "WMEASCYCLCOMPL",
+					   "START_AGAIN",
+					   "WMEASCYCLCOMPL_AGAIN",
+					   "CALC",
+					   "UNKNOWN",
+					   "UNKNOWN",
+					   "UNKNOWN",
+					   "UNKNOWN",
+					   "UNKNOWN",
+					   "UNKNOWN",
+					   "UNKNOWN",
+					   "UNKNOWN",
+					   "END"};
+	
+
+
+
+		const char *SM_LOWP[4] = { "OFF",
+					   "ON",
+					   "STANDBY",
+					   "SHIP"};
+	
+
+
+	
 	
 };
 

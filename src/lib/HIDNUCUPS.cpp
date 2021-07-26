@@ -214,24 +214,161 @@ HIDNUCUPS::~HIDNUCUPS()
 
 void HIDNUCUPS::printValues()
 {
-    fprintf(stdout, " Input: %d\n Output: %d\n Charger Flags: %d\n State Flags: %d\n", m_nInput, m_nOutput, m_nChargerFlags, m_nStateFlags);
-    fprintf(stdout, " Shutdown Flags: %d\n VIn: %f\n IOut: %f\n VOut:%f\n", m_nShutdownFlags, m_fVIn, m_fIOut, m_fVOut);
-    fprintf(stdout, " VIgnition: %f\n POut: %f\n Temperature1: %f\n Temperature2: %f\n Temperature3: %f\n Temperature4: %f\n",
-        m_fVIgnition, m_fPOut, m_fTemperature[0], m_fTemperature[1], m_fTemperature[2], m_fTemperature[3]);
+    fprintf(stdout, "\n");
+    
+    fprintf(stdout, "State machine UPS: %d - %s\n",m_nStateMachine[0], SM_UPS[m_nStateMachine[0]]);
+    fprintf(stdout, "State machine AFE: %d - %s\n",m_nStateMachine[1], SM_AFE[m_nStateMachine[1]]);
+    fprintf(stdout, "State machine CHG: %d - %s\n",m_nStateMachine[2], SM_CHG[m_nStateMachine[2]]);
+    fprintf(stdout, "State machine DTCT: %d - %s\n",m_nStateMachine[3], SM_DTCT[m_nStateMachine[3]]);
+    fprintf(stdout, "State machine LOWP: %d - %s\n",m_nStateMachine[4], SM_LOWP[m_nStateMachine[4]]);
 
-    fprintf(stdout, " BatVoltage1: %f\n  BatVoltage2: %f\n BatVoltage3: %f\n BatVoltage4: %f\n", 
-        m_fBatVoltage[0], m_fBatVoltage[1], m_fBatVoltage[2], m_fBatVoltage[3]);
+    fprintf(stdout, "\n");
 
-    fprintf(stdout, " CellBalanceOn1: %d\n CellBalanceOn2: %d\n CellBalanceOn3: %d\n CellBalanceOn4: %d\n", 
-        m_fCellBalanceOn[0], m_fCellBalanceOn[1], m_fCellBalanceOn[2], m_fCellBalanceOn[3]);    
+    fprintf(stdout, "VIn: %f [V]\n", m_fVIn);
+    fprintf(stdout, "VOut: %f [V]\n", m_fVOut);
+    fprintf(stdout, "IOut: %f [A]\n", m_fIOut);
+    fprintf(stdout, "POut: %f [W]\n", m_fPOut);
+    fprintf(stdout, "VIgnition: %f [V]\n", m_fVIgnition);
 
-    fprintf(stdout, " CellDetected1: %d\n CellDetected2: %d\n CellDetected3: %d\n CellDetected4: %d\n",
+    fprintf(stdout, "\n");
+
+    fprintf(stdout, "BatteryLevel: %d [%%]\n" , m_chBatteryLevel);
+    fprintf(stdout, "BatOverallVoltage: %f [V]\n", m_fBatOverallVoltage);
+    fprintf(stdout, "BatPack: %f [V]\n", m_fBatPack);
+    fprintf(stdout, "IChgDchg: %f [A]\n", m_fIChgDchg);
+    fprintf(stdout, "CellDetected: [%d %d %d %d]\n",
         m_fCellDetected[0], m_fCellDetected[1], m_fCellDetected[2], m_fCellDetected[3]);
+    fprintf(stdout, "CellVoltage: [%f %f %f %f] [V]\n", 
+        m_fBatVoltage[0], m_fBatVoltage[1], m_fBatVoltage[2], m_fBatVoltage[3]);
+    fprintf(stdout, "CellBalanceOn: [%d %d %d %d]\n", 
+        m_fCellBalanceOn[0], m_fCellBalanceOn[1], m_fCellBalanceOn[2], m_fCellBalanceOn[3]);    
+    fprintf(stdout, "CellTemperature: [%f %f %f %f] [degC]\n", 
+        m_fTemperature[0], m_fTemperature[1], m_fTemperature[2], m_fTemperature[3]);
 
-    fprintf(stdout, " BatOverallVoltage: %f\n BatPack: %f\n IChgDchg: %f\n", m_fBatOverallVoltage, m_fBatPack, m_fIChgDchg);
-    fprintf(stdout, " VerMajor: %d\n VerMinor: %d\n", m_nVerMajor, m_nVerMinor);
-    fprintf(stdout, " State: %d\n ChargeEndedCondition: %d\n BatteryLevel: %d\n", m_nState, m_chChargeEndedCondition, m_chBatteryLevel);
-    fprintf(stdout, " Mode: %d\n CPUUsage: %d\n", m_chMode, m_nCPUUsage);
+    fprintf(stdout, "\n");
+
+    fprintf(stdout, "PrechargeTimer: %d [s]\n", m_nChgTimer[0]);
+    fprintf(stdout, "ChargeEnableTimer: %d [s]\n", m_nChgTimer[1]);
+    fprintf(stdout, "ChargeGlobalTimer: %d [s]\n", m_nChgTimer[2]);
+    fprintf(stdout, "ToppingTimer: %d [s]\n", m_nChgTimer[3]);
+
+    fprintf(stdout, "\n");
+
+    fprintf(stdout, "InitTimer: %d [ms]\n", m_nTimer[1]);
+    fprintf(stdout, "VinCounter: %d [ms]\n", m_nTimer[8]);
+    fprintf(stdout, "IgnCounter: %d [ms]\n", m_nTimer[9]);
+    fprintf(stdout, "IgnOnToOutputOnTimer: %d [s]\n", m_nTimer[2]);
+    fprintf(stdout, "OutputOnToMOBPulseOnTimer: %d [ms]\n", m_nTimer[0]);
+    fprintf(stdout, "MOBPulseWidthTimer: %d [ms]\n", m_nTimer[4]);
+    fprintf(stdout, "IgnOffToMOBPulseOffTimer: %d [s]\n", m_nTimer[5]);
+    fprintf(stdout, "IgnCancelTimer: %d [s]\n", m_nTimer[7]);
+    fprintf(stdout, "OnBatteryTimer: %d [s]\n", m_nTimer[3]);
+    fprintf(stdout, "HardOffTimer: %d [s]\n", m_nTimer[6]);
+
+    fprintf(stdout, "\n");
+
+    fprintf(stdout, "VerMajor: %d\nVerMinor: %d\n", m_nVerMajor, m_nVerMinor);
+    fprintf(stdout, "State: %d\n", m_nState);
+    fprintf(stdout, "ChargeEndedCondition: %d\n", m_chChargeEndedCondition);
+    fprintf(stdout, "Mode: %d\n", m_chMode);
+    fprintf(stdout, "CPUUsage: %d\n", m_nCPUUsage);
+    
+    fprintf(stdout, "\n");
+
+    fprintf(stdout, "Input Flags: %d [%d %d %d %d %d %d %d %d  %d %d %d %d %d %d %d %d]\n", 
+	m_nInput, m_nInput>>15 & 1, m_nInput>>14 & 1, m_nInput>>13 & 1, m_nInput>>12 & 1, m_nInput>>11 & 1, m_nInput>>10 & 1, m_nInput>>9 & 1, m_nInput>>8 & 1,
+	m_nInput>>7 & 1, m_nInput>>6 & 1, m_nInput>>5 & 1, m_nInput>>4 & 1, m_nInput>>3 & 1, m_nInput>>2 & 1, m_nInput>>1 & 1, m_nInput>>0 & 1);
+    fprintf(stdout, "Input Flags[ALERT]: %d\n", m_nInput>>0 & 1);
+    fprintf(stdout, "Input Flags[UNKNOWN1]: %d\n", m_nInput>>1 & 1);
+    fprintf(stdout, "Input Flags[BB_CHG_ENABLE]: %d\n", m_nInput>>2 & 1);
+    fprintf(stdout, "Input Flags[BUCK_mBUTTON]: %d\n", m_nInput>>3 & 1);
+    fprintf(stdout, "Input Flags[USB Sense]: %d\n", m_nInput>>4 & 1);
+    fprintf(stdout, "Input Flags[CFG Bootloader]: %d\n", m_nInput>>5 & 1);
+    fprintf(stdout, "Input Flags[ICSP_PGD]: %d\n", m_nInput>>6 & 1);
+    fprintf(stdout, "Input Flags[UNKNOWN2]: %d\n", m_nInput>>7 & 1);
+    fprintf(stdout, "Input Flags[BB_STAT1]: %d\n", m_nInput>>8 & 1);
+    fprintf(stdout, "Input Flags[BB_STAT2]: %d\n", m_nInput>>9 & 1);
+    fprintf(stdout, "Input Flags[GOOD_CELL_CFG]: %d\n", m_nInput>>10 & 1);
+    fprintf(stdout, "Input Flags[UNKNOWN3]: %d\n", m_nInput>>11 & 1);
+    fprintf(stdout, "Input Flags[UNKNOWN4]: %d\n", m_nInput>>12 & 1);
+    fprintf(stdout, "Input Flags[USB Mode]: %d\n", m_nInput>>13 & 1);
+    fprintf(stdout, "Input Flags[Input Mode]: %d\n", m_nInput>>14 & 1);
+    fprintf(stdout, "Input Flags[Battery Mode]: %d\n", m_nInput>>15 & 1);
+
+    fprintf(stdout, "\n");
+
+    fprintf(stdout, "Output Flags: %d [%d %d %d %d %d %d %d %d  %d %d %d %d %d %d %d %d]\n", 
+	m_nOutput, m_nOutput>>15 & 1, m_nOutput>>14 & 1, m_nOutput>>13 & 1, m_nOutput>>12 & 1, m_nOutput>>11 & 1, m_nOutput>>10 & 1, m_nOutput>>9 & 1, m_nOutput>>8 & 1,
+	m_nOutput>>7 & 1, m_nOutput>>6 & 1, m_nOutput>>5 & 1, m_nOutput>>4 & 1, m_nOutput>>3 & 1, m_nOutput>>2 & 1, m_nOutput>>1 & 1, m_nOutput>>0 & 1);
+    fprintf(stdout, "Output Flags[EN_THERMISTOR]: %d\n", m_nOutput>>0 & 1);
+    fprintf(stdout, "Output Flags[nPSW]: %d\n", m_nOutput>>1 & 1);
+    fprintf(stdout, "Output Flags[BUCK_ENABLE]: %d\n", m_nOutput>>2 & 1);
+    fprintf(stdout, "Output Flags[BUCK_5V_ENABLE]: %d\n", m_nOutput>>3 & 1);
+    fprintf(stdout, "Output Flags[BUCK_SYNC]: %d\n", m_nOutput>>4 & 1);
+    fprintf(stdout, "Output Flags[BB_MODE]: %d\n", m_nOutput>>5 & 1);
+    fprintf(stdout, "Output Flags[BB_ENABLE]: %d\n", m_nOutput>>6 & 1);
+    fprintf(stdout, "Output Flags[WAKE]: %d\n", m_nOutput>>7 & 1);
+    fprintf(stdout, "Output Flags[BB_PWM]: %d\n", m_nOutput>>8 & 1);
+    fprintf(stdout, "Output Flags[BUCK_12VGOOD]: %d\n", m_nOutput>>9 & 1);
+    fprintf(stdout, "Output Flags[I2C_SDA1]: %d\n", m_nOutput>>10 & 1);
+    fprintf(stdout, "Output Flags[I2C_SCL1]: %d\n", m_nOutput>>11 & 1);
+    fprintf(stdout, "Output Flags[CHARGER_ENABLE]: %d\n", m_nOutput>>12 & 1);
+    fprintf(stdout, "Output Flags[UNKNOWN1]: %d\n", m_nOutput>>13 & 1);    
+    fprintf(stdout, "Output Flags[UNKNOWN2]: %d\n", m_nOutput>>14 & 1);    
+    fprintf(stdout, "Output Flags[UNKNOWN3]: %d\n", m_nOutput>>15 & 1);
+
+    fprintf(stdout, "\n");
+
+    fprintf(stdout, "State Flags: %d [%d %d %d %d %d %d %d %d]\n", 
+	m_nStateFlags, m_nStateFlags>>7 & 1, m_nStateFlags>>6 & 1, m_nStateFlags>>5 & 1, m_nStateFlags>>4 & 1, m_nStateFlags>>3 & 1, m_nStateFlags>>2 & 1, m_nStateFlags>>1 & 1, m_nStateFlags>>0 & 1);
+    fprintf(stdout, "State Flags[VIN_GOOD]: %d\n", m_nStateFlags>>0 & 1);
+    fprintf(stdout, "State Flags[IGN_GOOD]: %d\n", m_nStateFlags>>1 & 1);
+    fprintf(stdout, "State Flags[MOB_ALIVE_POUT]: %d\n", m_nStateFlags>>2 & 1);
+    fprintf(stdout, "State Flags[SHOULDRESTART]: %d\n", m_nStateFlags>>3 & 1);
+    fprintf(stdout, "State Flags[UNKNOWN1]: %d\n", m_nStateFlags>>4 & 1);
+    fprintf(stdout, "State Flags[UNKNOWN2]: %d\n", m_nStateFlags>>5 & 1);
+    fprintf(stdout, "State Flags[IGN_RAISED]: %d\n", m_nStateFlags>>6 & 1);
+    fprintf(stdout, "State Flags[IGN_FAILED]: %d\n", m_nStateFlags>>7 & 1);
+
+    fprintf(stdout, "\n");
+
+    fprintf(stdout, "Shutdown Flags: %d [%d %d %d %d %d %d %d %d  %d %d %d %d %d %d %d %d]\n", 
+	m_nShutdownFlags, m_nShutdownFlags>>15 & 1, m_nShutdownFlags>>14 & 1, m_nShutdownFlags>>13 & 1, m_nShutdownFlags>>12 & 1, m_nShutdownFlags>>11 & 1, m_nShutdownFlags>>10 & 1, m_nShutdownFlags>>9 & 1, m_nShutdownFlags>>8 & 1,
+	m_nShutdownFlags>>7 & 1, m_nShutdownFlags>>6 & 1, m_nShutdownFlags>>5 & 1, m_nShutdownFlags>>4 & 1, m_nShutdownFlags>>3 & 1, m_nShutdownFlags>>2 & 1, m_nShutdownFlags>>1 & 1, m_nShutdownFlags>>0 & 1);
+    fprintf(stdout, "Shutdown Flags[Button]: %d\n", m_nShutdownFlags>>0 & 1);
+    fprintf(stdout, "Shutdown Flags[Ignition]: %d\n", m_nShutdownFlags>>1 & 1);
+    fprintf(stdout, "Shutdown Flags[PGood]: %d\n", m_nShutdownFlags>>2 & 1);
+    fprintf(stdout, "Shutdown Flags[USBSense]: %d\n", m_nShutdownFlags>>3 & 1);
+    fprintf(stdout, "Shutdown Flags[PowerSense]: %d\n", m_nShutdownFlags>>4 & 1);
+    fprintf(stdout, "Shutdown Flags[OnBatteryTimer]: %d\n", m_nShutdownFlags>>5 & 1);
+    fprintf(stdout, "Shutdown Flags[Undervoltage]: %d\n", m_nShutdownFlags>>6 & 1);
+    fprintf(stdout, "Shutdown Flags[HardUndervoltage]: %d\n", m_nShutdownFlags>>7 & 1);
+    fprintf(stdout, "Shutdown Flags[Overload]: %d\n", m_nShutdownFlags>>8 & 1);
+    fprintf(stdout, "Shutdown Flags[DchgTemperature]: %d\n", m_nShutdownFlags>>9 & 1);
+
+    fprintf(stdout, "\n");
+
+    fprintf(stdout, "Charger Flags: %d [%d %d %d %d %d %d %d %d  %d %d %d %d %d %d %d %d]\n", 
+	m_nChargerFlags, m_nChargerFlags>>15 & 1, m_nChargerFlags>>14 & 1, m_nChargerFlags>>13 & 1, m_nChargerFlags>>12 & 1, m_nChargerFlags>>11 & 1, m_nChargerFlags>>10 & 1, m_nChargerFlags>>9 & 1, m_nChargerFlags>>8 & 1,
+	m_nChargerFlags>>7 & 1, m_nChargerFlags>>6 & 1, m_nChargerFlags>>5 & 1, m_nChargerFlags>>4 & 1, m_nChargerFlags>>3 & 1, m_nChargerFlags>>2 & 1, m_nChargerFlags>>1 & 1, m_nChargerFlags>>0 & 1);
+    fprintf(stdout, "Charger Flags[GoodCellCfg]: %d\n", m_nChargerFlags>>0 & 1);
+    fprintf(stdout, "Charger Flags[CellOverVoltage]: %d\n", m_nChargerFlags>>1 & 1);
+    fprintf(stdout, "Charger Flags[CellUnderVoltage]: %d\n", m_nChargerFlags>>2 & 1);
+    fprintf(stdout, "Charger Flags[CellHardUnderVoltage]: %d\n", m_nChargerFlags>>3 & 1);
+    fprintf(stdout, "Charger Flags[LimitTmperature]: %d\n", m_nChargerFlags>>4 & 1);
+    fprintf(stdout, "Charger Flags[OverTemperature]: %d\n", m_nChargerFlags>>5 & 1);
+    fprintf(stdout, "Charger Flags[ShouldStartCharge]: %d\n", m_nChargerFlags>>6 & 1);
+    fprintf(stdout, "Charger Flags[ShouldStopCharge]: %d\n", m_nChargerFlags>>7 & 1);
+    fprintf(stdout, "Charger Flags[ShouldTrickleCharge]: %d\n", m_nChargerFlags>>8 & 1);
+    fprintf(stdout, "Charger Flags[PreChargeCondition]: %d\n", m_nChargerFlags>>9 & 1);
+    fprintf(stdout, "Charger Flags[BatteryFullyCharged]: %d\n", m_nChargerFlags>>10 & 1);
+    fprintf(stdout, "Charger Flags[ChargeCurrentIsValid]: %d\n", m_nChargerFlags>>11 & 1);
+    fprintf(stdout, "Charger Flags[CellsChargedVoltageOK]: %d\n", m_nChargerFlags>>12 & 1);
+    fprintf(stdout, "Charger Flags[BatteryCouldBeFullyCharged]: %d\n", m_nChargerFlags>>13 & 1);
+    fprintf(stdout, "Charger Flags[DchgTemperature]: %d\n", m_nChargerFlags>>14 & 1);
+    fprintf(stdout, "Charger Flags[UNKNOWN1]: %d\n", m_nChargerFlags>>15 & 1);
+    
+    fprintf(stdout, "\n");
 }
 
 void HIDNUCUPS::parseMessage(unsigned char *msg)
