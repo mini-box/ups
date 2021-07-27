@@ -249,7 +249,7 @@ void HIDNUCUPS::printValues()
 
     fprintf(stdout, "PrechargeTimer: %d [s]\n", m_nChgTimer[0]);
     fprintf(stdout, "ChargeEnableTimer: %d [s]\n", m_nChgTimer[1]);
-    fprintf(stdout, "ChargeGlobalTimer: %d [s]\n", m_nChgTimer[2]);
+    fprintf(stdout, "ChargeGlobalTimer: %d [m]\n", m_nChgTimer[2]);
     fprintf(stdout, "ToppingTimer: %d [s]\n", m_nChgTimer[3]);
 
     fprintf(stdout, "\n");
