@@ -169,8 +169,8 @@ int main(int argc, char **argv)
 		return 3;
 	}
 
-	/* After opening wait 1 second before querying the device */
-	usleep(1000);
+	/* After opening wait 100ms before querying the device */
+	usleep(1000*100);
 	
         if (doReset) {
                 ups->restartUPS();

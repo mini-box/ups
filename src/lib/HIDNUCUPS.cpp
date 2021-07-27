@@ -1400,7 +1400,7 @@ void HIDNUCUPS::EraseConfigurationMemory()
 	int retries = 5;
 	while ((ret = recvMessage(recv) <= 0) && retries > 0) {
 		retries--;
-		usleep(500);
+		usleep(500*1000);
 		fprintf(stderr, "Erase 0x%02x retry %d/5\n", recv[0], retries);
 	}
 
