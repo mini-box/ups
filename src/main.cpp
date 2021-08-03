@@ -61,6 +61,8 @@ int usage(char *progname)
 				"  -c:                  Add comments for each configuration variable to output file\n"
 				"  -s:                  Only output status don't read and show configuration variables\n"
 				"  -e <cmd:param1:...>: Execute command.\n"
+				"  -r			Restart UPS only and exit \n"
+				"  -b			Restart UPS to bootloader and exit \n"
                 "\n",
                 progname);
 
@@ -85,12 +87,14 @@ int main(int argc, char **argv)
 	char *outfile = NULL;
 	bool withComments = false;
 	bool withConfiguration = true;
+	bool doReset = false;
+	bool goBootloader = false;
 	char *execCmd = NULL;
 
 	if (argc < 2)
 		return usage(progname);
 
-	while ((c = getopt(argc, argv, "t:i:o:e:csh")) != -1) {
+	while ((c = getopt(argc, argv, "t:i:o:e:cshrb")) != -1) {
 		switch (c) {
 			
 			case 't':
@@ -113,6 +117,12 @@ int main(int argc, char **argv)
 				break;
 			case 'h':
 				usage(progname);
+				break;
+			case 'r':
+				doReset = true;
+				break;
+			case 'b':
+				goBootloader = true;
 				break;
 			default:
 				usage(progname);
@@ -159,8 +169,21 @@ int main(int argc, char **argv)
 		return 3;
 	}
 
-	/* After opening wait 1 second before querying the device */
-	usleep(1000);
+	/* After opening wait 100ms before querying the device */
+	usleep(1000*100);
+	
+        if (doReset) {
+                ups->restartUPS();
+                fprintf(stdout, "Restarted UPS\n");
+                return 0;
+        }
+
+        if (goBootloader) {
+                ups->restartUPSInBootloaderMode();
+                fprintf(stdout, "Restarted UPS in Bootloader Mode\n");
+                return 0;
+        }
+
 	
 	ups->GetStatus();
 	ups->printValues();	

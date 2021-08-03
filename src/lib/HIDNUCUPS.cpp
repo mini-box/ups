@@ -249,7 +249,7 @@ void HIDNUCUPS::printValues()
 
     fprintf(stdout, "PrechargeTimer: %d [s]\n", m_nChgTimer[0]);
     fprintf(stdout, "ChargeEnableTimer: %d [s]\n", m_nChgTimer[1]);
-    fprintf(stdout, "ChargeGlobalTimer: %d [s]\n", m_nChgTimer[2]);
+    fprintf(stdout, "ChargeGlobalTimer: %d [m]\n", m_nChgTimer[2]);
     fprintf(stdout, "ToppingTimer: %d [s]\n", m_nChgTimer[3]);
 
     fprintf(stdout, "\n");
@@ -1400,7 +1400,7 @@ void HIDNUCUPS::EraseConfigurationMemory()
 	int retries = 5;
 	while ((ret = recvMessage(recv) <= 0) && retries > 0) {
 		retries--;
-		usleep(500);
+		usleep(500*1000);
 		fprintf(stderr, "Erase 0x%02x retry %d/5\n", recv[0], retries);
 	}
 
