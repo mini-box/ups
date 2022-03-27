@@ -12,10 +12,11 @@
 
 #undef DEBUG_RECV
 
-USBHID::USBHID(unsigned int vendorid, unsigned int productid, unsigned int max_transfer_size)
+USBHID::USBHID(unsigned int vendorid, unsigned int productid, unsigned int max_transfer_size, unsigned int index)
 {
     this->vendorid = vendorid;
     this->productid = productid;
+    this->index = index;
     this->device = NULL;
     this->handle = NULL;
     this->connected = false;
@@ -69,6 +70,7 @@ struct usb_dev_handle *USBHID::open(void)
 struct usb_device *USBHID::find(void)
 {
     struct usb_bus *bus;
+    unsigned int i = 0;
 
     for (bus = usb_get_busses(); bus; bus = bus->next)
     {
@@ -76,7 +78,14 @@ struct usb_device *USBHID::find(void)
         for (dev = bus->devices; dev; dev = dev->next)
         {
             if (dev->descriptor.idVendor == this->vendorid && dev->descriptor.idProduct == this->productid)
-                return dev;
+            {
+                if (i == this->index)
+                {
+                    return dev;
+                } else {
+                    i++;
+                }
+            }
         }
     }
     return NULL;
