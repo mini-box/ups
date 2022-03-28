@@ -22,6 +22,7 @@
 #include <strings.h>
 #include <ctype.h>
 #include <libgen.h>
+#include <cerrno>
 
 
 static const struct deviceId* findDeviceByName(const char *name) 
@@ -56,6 +57,7 @@ int usage(char *progname)
                 "Usage: %s [<options>]\n"
                 "Options:\n"
                 "  -t <device type>:    Select device model (see below)\n"
+                "  -n <device index>:   Select nth connected device of this model (default 0)\n"
 				"  -i <input file>:     Write settings from this file. Warning: Will reboot UPS!\n"
 				"  -o <output file>:    Dump settings to this file\n"
 				"  -c:                  Add comments for each configuration variable to output file\n"
@@ -90,11 +92,12 @@ int main(int argc, char **argv)
 	bool doReset = false;
 	bool goBootloader = false;
 	char *execCmd = NULL;
+	unsigned long index = 0;
 
 	if (argc < 2)
 		return usage(progname);
 
-	while ((c = getopt(argc, argv, "t:i:o:e:cshrb")) != -1) {
+	while ((c = getopt(argc, argv, "t:i:o:e:cshrbn:")) != -1) {
 		switch (c) {
 			
 			case 't':
@@ -124,6 +127,18 @@ int main(int argc, char **argv)
 			case 'b':
 				goBootloader = true;
 				break;
+			case 'n':
+				errno = 0;
+				index = strtoul(optarg, NULL, 10);
+				if (errno != 0) {
+					perror("error in value for -n");
+					return usage(progname);
+				}
+				if (index > UINT_MAX) {
+					fprintf(stderr, "error in value for -n: too big\n");
+					return usage(progname);
+				}
+				break;
 			default:
 				usage(progname);
 		}
@@ -144,7 +159,7 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Selected device %s: %s\n", devid->name, devid->desc);
 	}
 
-	USBHID *d = new USBHID(devid->vendorid, devid->productid, devid->max_transfer_size);
+	USBHID *d = new USBHID(devid->vendorid, devid->productid, devid->max_transfer_size, (unsigned int) index);
 
 	d->open();
 	if (!d->isOpened())

@@ -8,7 +8,7 @@
 
 class USBHID {
     public:
-        USBHID(unsigned int vendorid, unsigned int productid, unsigned int max_transfer_size);
+        USBHID(unsigned int vendorid, unsigned int productid, unsigned int max_transfer_size, unsigned int index);
         ~USBHID();
 
         struct usb_dev_handle* open(void);
@@ -26,6 +26,7 @@ class USBHID {
         unsigned int vendorid;
         unsigned int productid;
         unsigned int max_transfer_size;
+        unsigned int index;
         bool connected;
         struct usb_device *device;
         struct usb_dev_handle *handle;
