@@ -63,7 +63,8 @@ These devices allow advanced configuration which can be quite complex. It's reco
 
 ## Install from source
 
-    $ git clone && cd openups
+    $ git clone https://github.com/mini-box/ups.git
+    $ cd ups
     $ cmake .
     $ sudo make install
 
