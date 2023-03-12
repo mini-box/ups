@@ -6,6 +6,7 @@
  */
 
 #include <math.h>
+#include <unistd.h>
 
 #include "HIDNUCUPS.h"
 

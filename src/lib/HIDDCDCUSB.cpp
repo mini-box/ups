@@ -9,6 +9,7 @@
 #include "HIDDCDCUSB.h"
 #include "util.h"
 #include <math.h>
+#include <unistd.h>
 
 #define A_SLEEP 5
 #define A_TIMEOUT 3000
