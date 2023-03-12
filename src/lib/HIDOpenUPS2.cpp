@@ -7,6 +7,7 @@
 
 #include "util.h"
 #include "HIDOpenUPS2.h"
+#include <unistd.h>
 
 #include <math.h>
 

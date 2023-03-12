@@ -23,6 +23,7 @@
 #include <ctype.h>
 #include <libgen.h>
 #include <cerrno>
+#include <unistd.h>
 
 
 static const struct deviceId* findDeviceByName(const char *name) 

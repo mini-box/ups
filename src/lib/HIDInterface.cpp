@@ -10,6 +10,7 @@
 #include <strings.h>
 #include <stdarg.h>
 #include <ctype.h>
+#include <stdlib.h>
 
 #include "HIDInterface.h"
 #include "HArray.h"

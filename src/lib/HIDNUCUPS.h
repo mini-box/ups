@@ -1,5 +1,5 @@
 #ifndef _HIDNUCUPS_H_
-#define _HIDINUCUPS_H_
+#define _HIDNUCUPS_H_
 
 #include "usbhid.h"
 #include "util.h"
