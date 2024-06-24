@@ -186,7 +186,7 @@ void HIDOpenUPS::printValues()
 
 	fprintf(stdout, "VIN: %f\n VBat: %f\n VOut: %f \n CCharge: %f\n", m_fVIN, m_fVBat, m_fVOut, m_fCCharge);
 	fprintf(stdout, "Temperature: %f\n ", m_fTemperature);
-	fprintf(stdout, "VCell1: %f\n VCell2: %f\n VCell3: %f\n", m_fVCell[0], m_fVCell[1], m_fVCell[2]);
+	fprintf(stdout, "VCell1: %f\n VCell2: %f\n VCell3: %f\n VCell4: %f\n VCell5: %f\n VCell6: %f\n", m_fVCell[0], m_fVCell[1], m_fVCell[2], m_fVCell[3], m_fVCell[4], m_fVCell[5]);
 	fprintf(stdout, "CDischarge: %f\n ", m_fCDischarge);
 	fprintf(stdout, "VerMajor: %d\n VerMinor: %d\n", m_nVerMajor, m_nVerMinor);
 	fprintf(stdout, "State: %d\n ", m_nState);
